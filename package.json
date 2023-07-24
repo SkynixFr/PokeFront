@@ -1,0 +1,40 @@
+{
+	"name": "pokefront",
+	"version": "1.0.0",
+	"description": "PokeFront est une application qui permet à l'utilisateur d'afficher son propre pokédex de pokémons.",
+	"main": "index.ts",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"prettier": "prettier --write ."
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/SkynixFr/PokeFront.git"
+	},
+	"keywords": [
+		"Pokefront",
+		"Pokémon",
+		"Pokédex"
+	],
+	"author": "SkynixFr, Luffisonic, Mcoulon001",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/SkynixFr/PokeFront/issues"
+	},
+	"homepage": "https://github.com/SkynixFr/PokeFront#readme",
+	"dependencies": {
+		"next": "^13.4.12",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
+	},
+	"devDependencies": {
+		"@types/node": "20.4.4",
+		"@types/react": "^18.2.15",
+		"@types/react-dom": "^18.2.7",
+		"prettier": "^3.0.0",
+		"typescript": "^5.1.6"
+	}
+}
