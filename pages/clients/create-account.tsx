@@ -1,5 +1,6 @@
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 const CreateAccountPage = () => {
 	const [email, setEmail] = useState<string>('');
@@ -24,6 +25,12 @@ const CreateAccountPage = () => {
 			if (!isValidEmail(email) || password != confirmPassword) {
 				setErrorMessage('Email ou mot de passe incorrect');
 			}
+			console.log('email ' + email);
+			console.log('password ' + password);
+			console.log('confirmpassword ' + confirmPassword);
+			console.log(' type email ' + typeof email);
+			console.log(' type password ' + typeof password);
+			console.log(' type confirmpassword ' + typeof password);
 		} catch (error) {
 			setErrorMessage('Erreur lors de la création du compte');
 		}
@@ -65,6 +72,10 @@ const CreateAccountPage = () => {
 				<button type="submit">Créer le compte</button>
 			</form>
 			{errorMessage && <p>{errorMessage}</p>}
+			<p>Déjà un compte ?</p>
+			<Link href="./login">
+				<p>Se connecter</p>
+			</Link>
 		</div>
 	);
 };
