@@ -6,6 +6,7 @@ const CreateAccountPage = () => {
 	const [email, setEmail] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
 	const [confirmPassword, setConfirmPassword] = useState<string>('');
+	const [pseudo, setPseudo] = useState<string>('');
 	const [errorMessage, setErrorMessage] = useState<string>('');
 
 	const router = useRouter();
@@ -25,12 +26,33 @@ const CreateAccountPage = () => {
 			if (!isValidEmail(email) || password != confirmPassword) {
 				setErrorMessage('Email ou mot de passe incorrect');
 			}
-			console.log('email ' + email);
-			console.log('password ' + password);
-			console.log('confirmpassword ' + confirmPassword);
-			console.log(' type email ' + typeof email);
-			console.log(' type password ' + typeof password);
-			console.log(' type confirmpassword ' + typeof password);
+			// Appel à l'API pour la vérification du login
+			const response = await fetch(
+				'http://localhost:8080/api/v1/client/register',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						mailClient: email,
+						mdpClient: password,
+						username: pseudo
+					})
+				}
+			);
+			console.log(email);
+			console.log(password);
+			console.log(pseudo);
+			const data = await response.json();
+			if (response.ok) {
+				// La réponse indique que le login est valide, redirigez l'utilisateur vers une autre page
+				//router.push('/dashboard'); // Assurez-vous d'avoir importé "import { useRouter } from 'next/router';"
+				console.log('Le client est crée');
+			} else {
+				// La réponse indique que le login est invalide, affichez le message d'erreur
+				setErrorMessage(data.message);
+			}
 		} catch (error) {
 			setErrorMessage('Erreur lors de la création du compte');
 		}
@@ -69,6 +91,16 @@ const CreateAccountPage = () => {
 						onChange={e => setConfirmPassword(e.target.value)}
 					/>
 				</div>
+				<div>
+					<label htmlFor="Pseudo">Pseudo</label>
+					<input
+						id="Pseudo"
+						type="text"
+						value={pseudo}
+						onChange={e => setPseudo(e.target.value)}
+					/>
+				</div>
+
 				<button type="submit">Créer le compte</button>
 			</form>
 			{errorMessage && <p>{errorMessage}</p>}

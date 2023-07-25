@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
@@ -20,21 +20,40 @@ const LoginPage = () => {
 		setErrorMessage(''); // Réinitialise le message d'erreur
 
 		try {
-			// Vous pouvez envoyer les données (email et mot de passe) à votre backend pour la vérification.
+			// Vérifiez que l'email est valide avant d'appeler l'API
+			if (!isValidEmail(email)) {
+				setErrorMessage('Email invalide');
+				return;
+			}
 
-			// Exemple factice pour la démonstration
-			if (isValidEmail(email)) {
+			// Appel à l'API pour la vérification du login
+			const response = await fetch(
+				'http://localhost:8080/api/v1/client/login',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ mailClient: email, mdpClient: password })
+				}
+			);
+
+			const data = await response.json();
+
+			if (response.ok) {
+				// La réponse indique que le login est valide, redirigez l'utilisateur vers une autre page
+				//router.push('/dashboard'); // Assurez-vous d'avoir importé "import { useRouter } from 'next/router';"
+				console.log('Le client est connecté');
+				// Extraire le token JWT de la réponse et l'afficher dans la console
+				const token = data.token;
+				console.log('Token JWT :', token);
 			} else {
-				setErrorMessage('Email ou mot de passe incorrect');
+				// La réponse indique que le login est invalide, affichez le message d'erreur
+				setErrorMessage(data.message);
 			}
 		} catch (error) {
 			setErrorMessage('Erreur lors de la connexion');
 		}
-		console.log('email : ' + email);
-		console.log('type email : ' + typeof email);
-		console.log('email is correct ? : ' + isValidEmail(email));
-		console.log('password :' + password);
-		console.log('type password : ' + typeof password);
 	};
 
 	return (
