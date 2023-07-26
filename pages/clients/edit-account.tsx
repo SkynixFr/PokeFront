@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 
@@ -9,17 +9,25 @@ const EditAccountPage = () => {
 	const [confirmPassword, setConfirmPassword] = useState<string>('');
 	const [errorMessage, setErrorMessage] = useState<string>('');
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const token =
-		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtYWlsQ2xpZW50Ijoicmlja3lAZ21haWwuY29tIiwibWRwQ2xpZW50IjoiJDJiJDEwJFdubmt3cmJPcjU1bENXbWFGaVc3Y2VmRlcxZHRRSE9GWkZZZ1FhUzdRRGhBdjNyc052MHN1IiwiaWF0IjoxNjkwMzc3MzE5LCJleHAiOjE2OTAzODA5MTl9.cRwDI0R_wKl9aLLVPVVA1d39FRqw4tQBODZYyHIdUIA';
 	const router = useRouter();
 
+	let jwtToken;
+	// Vérifier la présence du token JWT au chargement de la page
+	useEffect(() => {
+		jwtToken = localStorage.getItem('jwtToken');
+		// Si le token JWT n'est pas présent, rediriger vers la page de connexion
+		if (!jwtToken) {
+			alert('Vous devez vous connecter pour accéder à cette page');
+			router.push('/clients/login');
+		}
+	}, [router]);
 	// Votre configuration prédéfinie ici (incluant le token JWT)
 	const config = {
 		method: 'put',
 		maxBodyLength: Infinity,
 		url: 'http://localhost:8080/api/v1/client', // Replace with your API endpoint for deleting the account
 		headers: {
-			'x-access-token': token
+			'x-access-token': jwtToken
 		},
 		data: {
 			username: pseudo,

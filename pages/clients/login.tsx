@@ -56,11 +56,16 @@ const LoginPage = () => {
 
 			if (response.status === 201) {
 				// La réponse indique que le login est valide, redirigez l'utilisateur vers une autre page si nécessaire
-				console.log('Le client est connecté');
+				//console.log('Le client est connecté');
 				// Extraire le token JWT de la réponse et l'afficher dans la console
 				const token = data.token;
-				console.log('Token JWT :', token);
-				setErrorMessage(data.message);
+				if (token) {
+					setErrorMessage(data.message);
+					// Enregistrer le token JWT dans localStorage
+					localStorage.setItem('jwtToken', token);
+					//const jwtToken = localStorage.getItem('jwtToken');
+					//console.log('Token JWT :', jwtToken);
+				}
 			} else {
 				// La réponse indique que le login est invalide, affichez le message d'erreur
 				setErrorMessage('Erreur lors de la connexion');

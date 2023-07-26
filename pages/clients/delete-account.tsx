@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 
@@ -7,16 +7,23 @@ const DeleteAccountPage = () => {
 	const [errorMessage, setErrorMessage] = useState<string>('');
 	const router = useRouter();
 	// Token JWT à remplacer en cas de changement
-	const token =
-		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtYWlsQ2xpZW50Ijoicmlja3lAZ21haWwuY29tIiwibWRwQ2xpZW50IjoiJDJiJDEwJFB1dEY2T2swTWEubXRndE01Rk85U3VtNVJ5VXNqMTJ5QjJydjBOMmE4eFNDMnJ0emlZSmF5IiwiaWF0IjoxNjkwMzczNjcwLCJleHAiOjE2OTAzNzcyNzB9._S8EC9zeVtJdKbU1gv3ttt1ts8mc9M0tLQDh0Sncy-Q';
-
+	let jwtToken;
+	// Vérifier la présence du token JWT au chargement de la page
+	useEffect(() => {
+		jwtToken = localStorage.getItem('jwtToken');
+		// Si le token JWT n'est pas présent, rediriger vers la page de connexion
+		if (!jwtToken) {
+			alert('Vous devez vous connecter pour accéder à cette page');
+			router.push('/clients/login');
+		}
+	}, [router]);
 	// Define the config object here
 	const config = {
 		method: 'delete',
 		maxBodyLength: Infinity,
 		url: 'http://localhost:8080/api/v1/client', // Replace with your API endpoint for deleting the account
 		headers: {
-			'x-access-token': token
+			'x-access-token': jwtToken
 		},
 		data: {} // You can pass any data you need for the deletion request
 	};
