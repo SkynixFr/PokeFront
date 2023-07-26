@@ -1,6 +1,7 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import axios from 'axios';
 
 const LoginPage = () => {
 	const [email, setEmail] = useState<string>('');
@@ -20,39 +21,55 @@ const LoginPage = () => {
 		setErrorMessage(''); // Réinitialise le message d'erreur
 
 		try {
+			// Vérifier si des champs ne sont pas vides
+			if (!email || !password) {
+				setErrorMessage('Tous les champs doivent être remplis.');
+				return;
+			}
 			// Vérifiez que l'email est valide avant d'appeler l'API
 			if (!isValidEmail(email)) {
 				setErrorMessage('Email invalide');
-				return;
 			}
 
 			// Appel à l'API pour la vérification du login
-			const response = await fetch(
+			const response = await axios.post(
 				'http://localhost:8080/api/v1/client/login',
+				{ mailClient: email, mdpClient: password },
 				{
-					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ mailClient: email, mdpClient: password })
+					}
 				}
 			);
 
-			const data = await response.json();
+			const data = response.data;
 
-			if (response.ok) {
+			if (response.status === 201) {
 				// La réponse indique que le login est valide, redirigez l'utilisateur vers une autre page
 				//router.push('/dashboard'); // Assurez-vous d'avoir importé "import { useRouter } from 'next/router';"
 				console.log('Le client est connecté');
 				// Extraire le token JWT de la réponse et l'afficher dans la console
 				const token = data.token;
 				console.log('Token JWT :', token);
+				setErrorMessage(data.message);
 			} else {
 				// La réponse indique que le login est invalide, affichez le message d'erreur
-				setErrorMessage(data.message);
+				setErrorMessage('Erreur lors de la connexion');
 			}
 		} catch (error) {
-			setErrorMessage('Erreur lors de la connexion');
+			if (
+				axios.isAxiosError(error) &&
+				error.response &&
+				error.response.status === 404
+			) {
+				// The request was made and the server responded with a 409 status code (Conflict)
+				setErrorMessage('Utilisateur non présent');
+			} else {
+				// Other Axios errors or network errors
+				setErrorMessage(
+					'Erreur lors de la connexion du compte. Veuillez vérifier vos informations.'
+				);
+			}
 		}
 	};
 
