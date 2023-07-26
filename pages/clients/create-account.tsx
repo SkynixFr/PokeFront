@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import axios from 'axios';
@@ -9,9 +9,11 @@ const CreateAccountPage = () => {
 	const [confirmPassword, setConfirmPassword] = useState<string>('');
 	const [pseudo, setPseudo] = useState<string>('');
 	const [errorMessage, setErrorMessage] = useState<string>('');
-	const [isLoading, setIsLoading] = useState<boolean>(false); // Track loading state
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isAccountCreated, setIsAccountCreated] = useState<boolean>(false);
 
 	const router = useRouter();
+
 	//vérifier validité de l'email "user"@"mail"."fin"
 	const isValidEmail = (email: string): boolean => {
 		const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -21,19 +23,19 @@ const CreateAccountPage = () => {
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setErrorMessage(''); // Réinitialise le message d'erreur
-		setIsLoading(true); // Set loading state to true
+		setIsLoading(true);
 
 		try {
 			// Check for empty fields
 			if (!email || !password || !confirmPassword || !pseudo) {
 				setErrorMessage('Tous les champs doivent être remplis.');
-				setIsLoading(false); // Reset loading state
+				setIsLoading(false);
 				return;
 			}
 			//Vérification Email et mot de passe avec mot de passe de confirmation
 			if (!isValidEmail(email) || password !== confirmPassword) {
 				setErrorMessage('Email ou mot de passe incorrect');
-				setIsLoading(false); // Reset loading state
+				setIsLoading(false);
 				return;
 			}
 			// Appel à l'API pour la vérification du login
@@ -46,14 +48,18 @@ const CreateAccountPage = () => {
 					}
 				}
 			);
-			console.log(email);
-			console.log(password);
-			console.log(pseudo);
-			const data = response.data;
+
 			if (response.status === 201) {
 				// The response is successful (status code 201)
 				console.log('Le client est créé');
-				setErrorMessage('Compte Crée');
+				setErrorMessage(''); // Clear any previous error messages
+				setIsAccountCreated(true); // Show the toast notification
+				setIsLoading(false);
+				// Redirect to the login page after 3 seconds
+				setTimeout(() => {
+					setIsAccountCreated(false);
+					router.push('/clients/login');
+				}, 3000);
 			}
 		} catch (error) {
 			if (
@@ -69,8 +75,7 @@ const CreateAccountPage = () => {
 					'Erreur lors de la création du compte. Veuillez vérifier vos informations.'
 				);
 			}
-		} finally {
-			setIsLoading(false); // Reset loading state after the API call is completed
+			setIsLoading(false);
 		}
 	};
 
@@ -79,6 +84,44 @@ const CreateAccountPage = () => {
 			<h1>Créer un compte</h1>
 			<form onSubmit={handleSubmit}>
 				{/* Form fields */}
+				<div>
+					<label htmlFor="pseudo">Pseudo</label>
+					<input
+						id="pseudo"
+						type="text"
+						value={pseudo}
+						onChange={e => setPseudo(e.target.value)}
+					/>
+				</div>
+				<div>
+					<label htmlFor="email">Email</label>
+					<input
+						id="email"
+						type="email"
+						value={email}
+						onChange={e => setEmail(e.target.value)}
+					/>
+				</div>
+				<div>
+					<label htmlFor="password">Mot de passe</label>
+					<input
+						id="password"
+						type="password"
+						value={password}
+						onChange={e => setPassword(e.target.value)}
+					/>
+				</div>
+				<div>
+					<label htmlFor="confirmPassword">
+						Confirmer le mot de passe
+					</label>
+					<input
+						id="confirmPassword"
+						type="password"
+						value={confirmPassword}
+						onChange={e => setConfirmPassword(e.target.value)}
+					/>
+				</div>
 				<button type="submit">Créer le compte</button>
 			</form>
 			{isLoading && <p>Loading...</p>}{' '}
@@ -88,6 +131,24 @@ const CreateAccountPage = () => {
 			<Link href="./login">
 				<p>Se connecter</p>
 			</Link>
+			{isAccountCreated && (
+				<div className="toast-notification">
+					<p>Le compte a été créé avec succès!</p>
+				</div>
+			)}
+			<style jsx>{`
+				.toast-notification {
+					position: fixed;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+					background-color: #4caf50;
+					color: #fff;
+					padding: 10px 20px;
+					border-radius: 4px;
+					box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+				}
+			`}</style>
 		</div>
 	);
 };
