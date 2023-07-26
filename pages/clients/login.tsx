@@ -65,6 +65,7 @@ const LoginPage = () => {
 					localStorage.setItem('jwtToken', token);
 					//const jwtToken = localStorage.getItem('jwtToken');
 					//console.log('Token JWT :', jwtToken);
+					router.push('./dashboard');
 				}
 			} else {
 				// La réponse indique que le login est invalide, affichez le message d'erreur
