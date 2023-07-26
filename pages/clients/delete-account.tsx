@@ -6,28 +6,26 @@ const DeleteAccountPage = () => {
 	const [showConfirmation, setShowConfirmation] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string>('');
 	const router = useRouter();
+	// Token JWT à remplacer en cas de changement
+	const token =
+		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtYWlsQ2xpZW50Ijoicmlja3lAZ21haWwuY29tIiwibWRwQ2xpZW50IjoiJDJiJDEwJFB1dEY2T2swTWEubXRndE01Rk85U3VtNVJ5VXNqMTJ5QjJydjBOMmE4eFNDMnJ0emlZSmF5IiwiaWF0IjoxNjkwMzczNjcwLCJleHAiOjE2OTAzNzcyNzB9._S8EC9zeVtJdKbU1gv3ttt1ts8mc9M0tLQDh0Sncy-Q';
 
+	// Define the config object here
+	const config = {
+		method: 'delete',
+		maxBodyLength: Infinity,
+		url: 'http://localhost:8080/api/v1/client', // Replace with your API endpoint for deleting the account
+		headers: {
+			'x-access-token': token
+		},
+		data: {} // You can pass any data you need for the deletion request
+	};
 	const handleDeleteAccount = async () => {
 		setErrorMessage(''); // Réinitialise le message d'erreur
 		try {
 			// Check if the user is authenticated and has the necessary token here
 			// If the user is not authenticated, you can redirect them to the login page
 			// or show a message indicating that they need to log in first.
-
-			// Token JWT à remplacer en cas de changement
-			const token =
-				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtYWlsQ2xpZW50Ijoicmlja3lAZ21haWwuY29tIiwibWRwQ2xpZW50IjoiJDJiJDEwJFB1dEY2T2swTWEubXRndE01Rk85U3VtNVJ5VXNqMTJ5QjJydjBOMmE4eFNDMnJ0emlZSmF5IiwiaWF0IjoxNjkwMzczNjcwLCJleHAiOjE2OTAzNzcyNzB9._S8EC9zeVtJdKbU1gv3ttt1ts8mc9M0tLQDh0Sncy-Q';
-
-			// Define the config object here
-			const config = {
-				method: 'delete',
-				maxBodyLength: Infinity,
-				url: 'http://localhost:8080/api/v1/client', // Replace with your API endpoint for deleting the account
-				headers: {
-					'x-access-token': token
-				},
-				data: {} // You can pass any data you need for the deletion request
-			};
 
 			// Add your API call here to delete the user account
 			const response = await axios.request(config);
