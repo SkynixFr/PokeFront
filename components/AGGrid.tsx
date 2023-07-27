@@ -7,15 +7,15 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 const App = () => {
 	const [rowData] = useState([
-		{ make: 'Toyota', model: 'Celica', price: 35000 },
-		{ make: 'Ford', model: 'Mondeo', price: 32000 },
-		{ make: 'Porsche', model: 'Boxster', price: 72000 }
+		{ Nom: 'Toyota', Type: 'Celica', PV: 35000 },
+		{ Nom: 'Ford', Type: 'Mondeo', PV: 32000 },
+		{ Nom: 'Porsche', Type: 'Boxster', PV: 72000 }
 	]);
 
 	const [columnDefs] = useState([
-		{ field: 'make' },
-		{ field: 'model' },
-		{ field: 'price' }
+		{ field: 'Nom' },
+		{ field: 'Type' },
+		{ field: 'PV' }
 	]);
 
 	return (
@@ -24,3 +24,5 @@ const App = () => {
 		</div>
 	);
 };
+
+export default App;

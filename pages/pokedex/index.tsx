@@ -1,10 +1,13 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import AxiosRequets from '../../components/AxiosRequets';
-import AGGrid from '../../components/AgGrid';
+import AxiosRequetsPokedex from '../../components/AxiosRequetsPokedex';
 
 const pokédex = () => {
-	return <AxiosRequets />;
+	return (
+		<>
+			<AxiosRequetsPokedex />
+		</>
+	);
 };
 export default pokédex;

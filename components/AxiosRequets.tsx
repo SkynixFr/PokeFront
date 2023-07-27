@@ -3,7 +3,7 @@ import axios from 'axios';
 import Contenu from './Contenu';
 
 const token =
-	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtYWlsQ2xpZW50IjoibWF4aW1lOTMxMUBvdWx0bG9vay5jb20iLCJtZHBDbGllbnQiOiIkMmIkMTAkTlk3SnBRa1Q1WTk5Tmx0TE1UMS5aT2ovWmVUdDIxeWs2R1lHRVVNeUNxZWV4Lm5VeU9xeG0iLCJpYXQiOjE2OTA0NDY3NjYsImV4cCI6MTY5MDQ1MDM2Nn0.gKya78SOxRVywuza_FKxe-Tka4Hl2v8HUlACY-EgIW4';
+	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtYWlsQ2xpZW50IjoibWF4aW1lOTMxMUBvdWx0bG9vay5jb20iLCJtZHBDbGllbnQiOiIkMmIkMTAkTlk3SnBRa1Q1WTk5Tmx0TE1UMS5aT2ovWmVUdDIxeWs2R1lHRVVNeUNxZWV4Lm5VeU9xeG0iLCJpYXQiOjE2OTA0NjE0ODMsImV4cCI6MTY5MDQ2NTA4M30.l8Eoe9acgOgitTYoZak3leYiCB4eKD6meO5RqFITHfo';
 export default function AxiosRequets() {
 	// Stocker la data de la web API  dans le state
 	const [data, setData] = useState([]);
@@ -26,7 +26,6 @@ export default function AxiosRequets() {
 				setMyData(response.data.Pokemons);
 				mydata = response.data.Pokemons;
 				console.log('mydata : ', mydata);
-				console.log('type of : ', typeof mydata);
 			})
 			.catch(error => {
 				console.log(error);
