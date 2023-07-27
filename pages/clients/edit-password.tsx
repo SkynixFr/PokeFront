@@ -2,8 +2,7 @@ import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 
-const EditAccountPage = () => {
-	const [pseudo, setPseudo] = useState<string>('');
+const EditPasswordPage = () => {
 	const [password, setPassword] = useState<string>('');
 	const [newPassword, setNewPassword] = useState<string>('');
 	const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -36,7 +35,6 @@ const EditAccountPage = () => {
 			'x-access-token': jwtToken
 		},
 		data: {
-			username: pseudo || null,
 			mdpClient: newPassword || null
 		}
 	};
@@ -48,6 +46,12 @@ const EditAccountPage = () => {
 		setIsLoading(true); // Set loading state
 
 		try {
+			//Vérification que les champs ne sont pas vide
+			if (!password || !newPassword || !confirmPassword) {
+				setErrorMessage('Veuillez remplir tous les champs');
+				setIsLoading(false);
+				return;
+			}
 			// Check if new password and confirm password match
 			if (newPassword !== confirmPassword) {
 				setErrorMessage(
@@ -56,7 +60,12 @@ const EditAccountPage = () => {
 				setIsLoading(false); // Reset loading state
 				return;
 			}
-
+			// Check if new password and confirm password match and password is the same
+			if (password == confirmPassword || password == newPassword) {
+				setErrorMessage('Les mots de passes sont identiques');
+				setIsLoading(false); // Reset loading state
+				return;
+			}
 			//Call à l'API de modif
 			const response = await axios.request(config);
 			if (response.status === 200) {
@@ -76,15 +85,6 @@ const EditAccountPage = () => {
 			<h1>Modifier le compte</h1>
 			<form onSubmit={handleSubmit}>
 				{/* Form fields */}
-				<div>
-					<label htmlFor="pseudo">Pseudo</label>
-					<input
-						id="pseudo"
-						type="text"
-						value={pseudo}
-						onChange={e => setPseudo(e.target.value)}
-					/>
-				</div>
 				<div>
 					<label htmlFor="password">Mot de passe actuel</label>
 					<input
@@ -123,4 +123,4 @@ const EditAccountPage = () => {
 	);
 };
 
-export default EditAccountPage;
+export default EditPasswordPage;
