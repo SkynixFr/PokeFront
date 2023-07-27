@@ -53,8 +53,24 @@ const EditAccountPage = () => {
 		setShowLoading(true); // Afficher le composant de chargement
 
 		try {
+			if (!password) {
+				setErrorMessage('Veuillez entrer votre mot de passe');
+				setIsLoading(false); // Reset loading state
+				setShowLoading(false); // Cacher le composant de chargement
+				return;
+			}
+			//si On modifie le mot de passe
+			if (!isEditingPassword) {
+				//Vérification des champs vide dans le cas où on modifie le mot de passe
+				if (!pseudo) {
+					setErrorMessage('Veuillez entrer un pseudonyme');
+					setIsLoading(false); // Reset loading state
+					setShowLoading(false); // Cacher le composant de chargement
+					return;
+				}
+			}
 			// Check if new password and confirm password match
-			if (newPassword !== confirmPassword) {
+			if (isEditingPassword && newPassword !== confirmPassword) {
 				setErrorMessage(
 					'Le nouveau mot de passe ne correspond pas à la confirmation.'
 				);

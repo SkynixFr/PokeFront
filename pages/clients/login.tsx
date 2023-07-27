@@ -5,7 +5,6 @@ import axios from 'axios';
 import ReactLoading from 'react-loading';
 
 const LoginPage = () => {
-	// États pour stocker les valeurs des champs de formulaire et les messages d'erreur
 	const [email, setEmail] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
 	const [errorMessage, setErrorMessage] = useState<string>('');
@@ -29,6 +28,7 @@ const LoginPage = () => {
 			// Vérifier si des champs ne sont pas vides
 			if (!email || !password) {
 				setErrorMessage('Tous les champs doivent être remplis.');
+				setIsLoading(false); // Réinitialiser l'état de chargement
 				return;
 			}
 			// Vérifiez que l'email est valide avant d'appeler l'API
@@ -37,9 +37,6 @@ const LoginPage = () => {
 				setIsLoading(false); // Réinitialiser l'état de chargement
 				return;
 			}
-
-			// Simuler un délai de 2 secondes avant d'appeler l'API
-			await new Promise(resolve => setTimeout(resolve, 2000));
 
 			// Appel à l'API pour la vérification du login
 			const response = await axios.post(
@@ -86,8 +83,7 @@ const LoginPage = () => {
 				);
 			}
 		} finally {
-			// Assurez-vous que l'état de chargement est réinitialisé après 2 secondes, même s'il y a eu une erreur lors de la tentative de connexion
-			setTimeout(() => setIsLoading(false), 2000);
+			setIsLoading(false); // Réinitialiser l'état de chargement après l'appel à l'API
 		}
 	};
 
