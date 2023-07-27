@@ -8,37 +8,37 @@ const LoginPage = () => {
 	const [email, setEmail] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
 	const [errorMessage, setErrorMessage] = useState<string>('');
-	const [isLoading, setIsLoading] = useState<boolean>(false); // Suivre l'état de chargement de l'API
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [showConfirmation, setShowConfirmation] = useState<boolean>(false); // State to control the confirmation window
 
 	const router = useRouter();
 
-	// Fonction pour vérifier la validité de l'email "user"@"mail"."fin"
+	// Function to verify the validity of the email "user"@"mail"."fin"
 	const isValidEmail = (email: string): boolean => {
 		const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 		return emailRegex.test(email);
 	};
 
-	// Fonction pour gérer la soumission du formulaire
+	// Function to handle form submission
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		setErrorMessage(''); // Réinitialise le message d'erreur
-		setIsLoading(true); // Définir l'état de chargement à true pendant l'appel à l'API
+		setErrorMessage(''); // Reset error message
+		setIsLoading(true); // Set loading state to true during API call
 
 		try {
-			// Vérifier si des champs ne sont pas vides
+			// Check if fields are not empty
 			if (!email || !password) {
 				setErrorMessage('Tous les champs doivent être remplis.');
-				setIsLoading(false); // Réinitialiser l'état de chargement
+				setIsLoading(false); // Reset loading state
 				return;
 			}
-			// Vérifiez que l'email est valide avant d'appeler l'API
+			// Check if the email is valid before calling the API
 			if (!isValidEmail(email)) {
 				setErrorMessage('Email invalide');
-				setIsLoading(false); // Réinitialiser l'état de chargement
+				setIsLoading(false); // Reset loading state
 				return;
 			}
-
-			// Appel à l'API pour la vérification du login
+			// API call to verify login
 			const response = await axios.post(
 				'http://localhost:8080/api/v1/client/login',
 				{ mailClient: email, mdpClient: password },
@@ -52,38 +52,27 @@ const LoginPage = () => {
 			const data = response.data;
 
 			if (response.status === 201) {
-				// La réponse indique que le login est valide, redirigez l'utilisateur vers une autre page si nécessaire
-				//console.log('Le client est connecté');
-				// Extraire le token JWT de la réponse et l'afficher dans la console
-				const token = data.token;
-				if (token) {
-					setErrorMessage(data.message);
-					// Enregistrer le token JWT dans localStorage
-					localStorage.setItem('jwtToken', token);
-					//const jwtToken = localStorage.getItem('jwtToken');
-					//console.log('Token JWT :', jwtToken);
+				// Login successful, show confirmation window and redirect to dashboard after 2 seconds
+				setErrorMessage(data.message);
+				setShowConfirmation(true);
+				setIsLoading(false); // Reset loading state
+
+				setTimeout(() => {
+					setShowConfirmation(false);
+					localStorage.setItem('jwtToken', data.token); // Save JWT token to localStorage
 					router.push('./dashboard');
-				}
+				}, 2000);
 			} else {
-				// La réponse indique que le login est invalide, affichez le message d'erreur
+				// Login failed, display error message
 				setErrorMessage('Erreur lors de la connexion');
+				setIsLoading(false); // Reset loading state
 			}
 		} catch (error) {
-			if (
-				axios.isAxiosError(error) &&
-				error.response &&
-				error.response.status === 404
-			) {
-				// La requête a été effectuée et le serveur a répondu avec un code d'état 409 (Conflit)
-				setErrorMessage('Utilisateur non présent');
-			} else {
-				// Autres erreurs Axios ou erreurs réseau
-				setErrorMessage(
-					'Erreur lors de la connexion du compte. Veuillez vérifier vos informations.'
-				);
-			}
-		} finally {
-			setIsLoading(false); // Réinitialiser l'état de chargement après l'appel à l'API
+			// Handle API call errors
+			setErrorMessage(
+				'Erreur lors de la connexion du compte. Veuillez vérifier vos informations.'
+			);
+			setIsLoading(false); // Reset loading state
 		}
 	};
 
@@ -122,11 +111,34 @@ const LoginPage = () => {
 					)}
 				</button>
 			</form>
+
+			{/* Confirmation window */}
+			{showConfirmation && (
+				<div className="confirmation-modal">
+					<p>Vous êtes connecté ! Redirection dans quelques instants...</p>
+				</div>
+			)}
+
+			{/* Error message */}
 			{errorMessage && <p>{errorMessage}</p>}
+
 			<p>Pas encore de compte ?</p>
 			<Link href="./create-account">
 				<p>Créer un compte</p>
 			</Link>
+
+			<style jsx>{`
+				.confirmation-modal {
+					position: fixed;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+					background-color: #ffffff;
+					padding: 20px;
+					border: 1px solid #ccc;
+					box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+				}
+			`}</style>
 		</div>
 	);
 };

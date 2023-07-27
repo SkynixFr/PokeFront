@@ -5,81 +5,76 @@ import ReactLoading from 'react-loading';
 
 const EditAccountPage = () => {
 	const [pseudo, setPseudo] = useState<string>('');
+	const [email, setEmail] = useState<string>(''); // New state for email
 	const [password, setPassword] = useState<string>('');
 	const [newPassword, setNewPassword] = useState<string>('');
 	const [confirmPassword, setConfirmPassword] = useState<string>('');
 	const [errorMessage, setErrorMessage] = useState<string>('');
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [isEditingPassword, setIsEditingPassword] = useState<boolean>(false); // Nouvelle variable d'état pour déterminer si l'utilisateur modifie le mot de passe
+	const [isEditingPassword, setIsEditingPassword] = useState<boolean>(false);
 	const router = useRouter();
-	// Nouvelle variable d'état pour contrôler l'affichage du chargement
 	const [showLoading, setShowLoading] = useState<boolean>(false);
-
-	// État local pour stocker la valeur du token JWT
 	const [jwtToken, setJwtToken] = useState<string | null>(null);
 
-	// Vérifier la présence du token JWT au chargement de la page
 	useEffect(() => {
 		const token = localStorage.getItem('jwtToken');
-		// Si le token JWT n'est pas présent, rediriger vers la page de connexion
 		if (!token) {
 			alert('Vous devez vous connecter pour accéder à cette page');
 			router.push('/clients/login');
 		} else {
-			// Stocker la valeur du token JWT dans l'état local
 			setJwtToken(token);
 		}
 	}, [router]);
 
-	// Votre configuration prédéfinie ici (incluant le token JWT)
 	const config = {
 		method: 'put',
 		maxBodyLength: Infinity,
-		url: 'http://localhost:8080/api/v1/client', // Replace with your API endpoint for deleting the account
+		url: 'http://localhost:8080/api/v1/client',
 		headers: {
 			'x-access-token': jwtToken
 		},
 		data: {
 			username: pseudo || null,
+			mailClient: email || null,
 			mdpClient: newPassword || null
 		}
 	};
 
-	// Function to handle form submission
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		setErrorMessage(''); // Réinitialise le message d'erreur
+		setErrorMessage('');
 		setIsLoading(true);
-		setShowLoading(true); // Afficher le composant de chargement
+		setShowLoading(true);
 
 		try {
 			if (!password) {
 				setErrorMessage('Veuillez entrer votre mot de passe');
-				setIsLoading(false); // Reset loading state
-				setShowLoading(false); // Cacher le composant de chargement
+				setIsLoading(false);
+				setShowLoading(false);
 				return;
 			}
-			//si On modifie le mot de passe
-			if (!isEditingPassword) {
-				//Vérification des champs vide dans le cas où on modifie le mot de passe
-				if (!pseudo) {
-					setErrorMessage('Veuillez entrer un pseudonyme');
-					setIsLoading(false); // Reset loading state
-					setShowLoading(false); // Cacher le composant de chargement
-					return;
-				}
+
+			if (
+				isEditingPassword &&
+				(newPassword === '' || confirmPassword === '')
+			) {
+				setErrorMessage(
+					'Le nouveau mot de passe ou la confirmation est vide.'
+				);
+				setIsLoading(false);
+				setShowLoading(false);
+				return;
 			}
-			// Check if new password and confirm password match
+
 			if (isEditingPassword && newPassword !== confirmPassword) {
 				setErrorMessage(
 					'Le nouveau mot de passe ne correspond pas à la confirmation.'
 				);
-				setIsLoading(false); // Reset loading state
-				setShowLoading(false); // Cacher le composant de chargement
+				setIsLoading(false);
+				setShowLoading(false);
 				return;
 			}
 
-			// Call à l'API de modif
 			const response = await axios.request(config);
 			if (response.status === 200) {
 				setErrorMessage('Compte mis à jour avec succès.');
@@ -90,14 +85,14 @@ const EditAccountPage = () => {
 				'Erreur lors de la mise à jour du compte. Veuillez réessayer.'
 			);
 		} finally {
-			setIsLoading(false); // Reset loading state after the API call is completed
-			setShowLoading(false); // Cacher le composant de chargement après l'appel à l'API
+			setIsLoading(false);
+			setShowLoading(false);
 		}
 	};
 
-	// Function to reset the form fields and state
 	const resetForm = () => {
 		setPseudo('');
+		setEmail('');
 		setPassword('');
 		setNewPassword('');
 		setConfirmPassword('');
@@ -109,7 +104,6 @@ const EditAccountPage = () => {
 		<div>
 			<h1>Modifier le compte</h1>
 			<form onSubmit={handleSubmit}>
-				{/* Form fields */}
 				<div>
 					<label htmlFor="pseudo">Pseudo</label>
 					<input
@@ -117,6 +111,15 @@ const EditAccountPage = () => {
 						type="text"
 						value={pseudo}
 						onChange={e => setPseudo(e.target.value)}
+					/>
+				</div>
+				<div>
+					<label htmlFor="email">Email</label>
+					<input
+						id="email"
+						type="email"
+						value={email}
+						onChange={e => setEmail(e.target.value)}
 					/>
 				</div>
 				<div>
@@ -128,7 +131,6 @@ const EditAccountPage = () => {
 						onChange={e => setPassword(e.target.value)}
 					/>
 				</div>
-				{/* Conditionally render the "Nouveau mot de passe" and "Confirmer le nouveau mot de passe" fields */}
 				{isEditingPassword && (
 					<>
 						<div>
@@ -159,12 +161,10 @@ const EditAccountPage = () => {
 				>
 					Modifier le mot de passe
 				</button>
-
 				<button type="submit" disabled={isLoading}>
 					{isLoading ? 'Chargement...' : 'Mettre à jour'}
 				</button>
 			</form>
-			{/* Conditionally render ReactLoading component */}
 			{showLoading && (
 				<div
 					style={{
