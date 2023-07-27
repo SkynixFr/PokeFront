@@ -30,13 +30,20 @@ const Header = () => {
 	return (
 		<header>
 			<h1>Menu</h1>
-			{isLoggedIn && (
+			{isLoggedIn ? (
 				<>
 					<a href="./edit-account">Modifier le compte</a>
 					<a href="./delete-account">Supprimer le compte</a>
 					<button onClick={handleLogout} disabled={isLoggingOut}>
 						{isLoggingOut ? 'Déconnexion en cours...' : 'Se déconnecter'}
 					</button>
+				</>
+			) : null}
+			{/* Afficher les liens "Se connecter" et "Créer un compte" uniquement si l'utilisateur n'est pas connecté */}
+			{!isLoggedIn && (
+				<>
+					<a href="./login">Se connecter</a>
+					<a href="./create-account">Créer un compte</a>
 				</>
 			)}
 		</header>
