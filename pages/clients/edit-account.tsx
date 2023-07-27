@@ -11,16 +11,22 @@ const EditAccountPage = () => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const router = useRouter();
 
-	let jwtToken;
+	// État local pour stocker la valeur du token JWT
+	const [jwtToken, setJwtToken] = useState<string | null>(null);
+
 	// Vérifier la présence du token JWT au chargement de la page
 	useEffect(() => {
-		jwtToken = localStorage.getItem('jwtToken');
+		const token = localStorage.getItem('jwtToken');
 		// Si le token JWT n'est pas présent, rediriger vers la page de connexion
-		if (!jwtToken) {
+		if (!token) {
 			alert('Vous devez vous connecter pour accéder à cette page');
 			router.push('/clients/login');
+		} else {
+			// Stocker la valeur du token JWT dans l'état local
+			setJwtToken(token);
 		}
 	}, [router]);
+
 	// Votre configuration prédéfinie ici (incluant le token JWT)
 	const config = {
 		method: 'put',
@@ -30,8 +36,8 @@ const EditAccountPage = () => {
 			'x-access-token': jwtToken
 		},
 		data: {
-			username: pseudo,
-			mdpClient: newPassword || password
+			username: pseudo || null,
+			mdpClient: newPassword || null
 		}
 	};
 

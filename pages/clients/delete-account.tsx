@@ -6,17 +6,22 @@ const DeleteAccountPage = () => {
 	const [showConfirmation, setShowConfirmation] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string>('');
 	const router = useRouter();
-	// Token JWT à remplacer en cas de changement
-	let jwtToken;
+	// État local pour stocker la valeur du token JWT
+	const [jwtToken, setJwtToken] = useState<string | null>(null);
+
 	// Vérifier la présence du token JWT au chargement de la page
 	useEffect(() => {
-		jwtToken = localStorage.getItem('jwtToken');
+		const token = localStorage.getItem('jwtToken');
 		// Si le token JWT n'est pas présent, rediriger vers la page de connexion
-		if (!jwtToken) {
+		if (!token) {
 			alert('Vous devez vous connecter pour accéder à cette page');
 			router.push('/clients/login');
+		} else {
+			// Stocker la valeur du token JWT dans l'état local
+			setJwtToken(token);
 		}
 	}, [router]);
+
 	// Define the config object here
 	const config = {
 		method: 'delete',
@@ -42,6 +47,8 @@ const DeleteAccountPage = () => {
 				setShowConfirmation(true);
 				setTimeout(() => {
 					setShowConfirmation(false);
+					// Supprimer le token JWT du local storage ou de tout autre moyen de stockage utilisé
+					localStorage.removeItem('jwtToken');
 					router.push('/clients/login'); // Redirect to the login page after 5 seconds
 				}, 5000);
 			} else {

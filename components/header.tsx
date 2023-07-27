@@ -9,8 +9,9 @@ const Header = () => {
 	// Vérifier la présence du token JWT au chargement du composant
 	useEffect(() => {
 		const jwtToken = localStorage.getItem('jwtToken');
-		setIsLoggedIn(!!jwtToken); // Convertir le token en booléen et mettre à jour l'état isLoggedIn
-	}, []);
+		const isAuthenticated = !!jwtToken;
+		setIsLoggedIn(isAuthenticated); // Mettre à jour l'état isLoggedIn en fonction de la présence du token JWT
+	}, [router.pathname]);
 
 	const handleLogout = () => {
 		setIsLoggingOut(true); // Activer l'état isLoggingOut pour afficher le message de déconnexion en cours
