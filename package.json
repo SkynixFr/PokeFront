@@ -26,6 +26,8 @@
 	},
 	"homepage": "https://github.com/SkynixFr/PokeFront#readme",
 	"dependencies": {
+		"ag-grid-community": "^30.0.5",
+		"ag-grid-react": "^30.0.5",
 		"axios": "^1.4.0",
 		"next": "^13.4.12",
 		"react": "^18.2.0",

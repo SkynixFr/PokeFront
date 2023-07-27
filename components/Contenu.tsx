@@ -1,7 +1,15 @@
 import React from 'react';
 
-const Contenu = () => {
-	return <div>Contenu TODO</div>;
+const Contenu = ({ todo }) => {
+	console.log(todo);
+
+	return (
+		<div>
+			<ul>
+				<li>{todo.nomPokemon}</li>
+			</ul>
+		</div>
+	);
 };
 
 export default Contenu;
