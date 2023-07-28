@@ -13,11 +13,11 @@ const LoginPage = () => {
 
 	const router = useRouter();
 
-	// Function to verify the validity of the email "user"@"mail"."fin"
-	const isValidEmail = (email: string): boolean => {
-		const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-		return emailRegex.test(email);
-	};
+	// // Function to verify the validity of the email "user"@"mail"."fin"
+	// const isValidEmail = (email: string): boolean => {
+	// 	const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+	// 	return emailRegex.test(email);
+	// };
 
 	// Function to handle form submission
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -32,26 +32,27 @@ const LoginPage = () => {
 				setIsLoading(false); // Reset loading state
 				return;
 			}
-			// Check if the email is valid before calling the API
-			if (!isValidEmail(email)) {
-				setErrorMessage('Email invalide');
-				setIsLoading(false); // Reset loading state
-				return;
-			}
+			// // Check if the email is valid before calling the API
+			// if (!isValidEmail(email)) {
+			// 	setErrorMessage('Email invalide');
+			// 	setIsLoading(false); // Reset loading state
+			// 	return;
+			// }
 			// API call to verify login
 			const response = await axios.post(
-				'http://localhost:8080/api/v1/client/login',
-				{ mailClient: email, mdpClient: password },
+				'http://localhost:8080/api/v2/users/login',
+				{ data: email, password: password },
 				{
 					headers: {
 						'Content-Type': 'application/json'
 					}
 				}
 			);
+			console.log(response);
 
 			const data = response.data;
 
-			if (response.status === 201) {
+			if (response.status === 200) {
 				// Login successful, show confirmation window and redirect to dashboard after 2 seconds
 				setErrorMessage(data.message);
 				setShowConfirmation(true);
@@ -84,7 +85,7 @@ const LoginPage = () => {
 					<label htmlFor="email">Email</label>
 					<input
 						id="email"
-						type="email"
+						type="text"
 						value={email}
 						onChange={e => setEmail(e.target.value)}
 					/>
