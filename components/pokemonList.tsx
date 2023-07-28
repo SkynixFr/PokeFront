@@ -1,30 +1,25 @@
 import React from 'react';
 
-interface ListItem {
-	id: number;
+interface Props {
 	name: string;
-	imageUrl: string;
+	id: number;
+	image: string;
+	type: string;
 }
 
-interface PokemonListProps {
-	items: ListItem[];
-}
+function PokemonList(props: Props) {
+	const { name, id, image, type } = props;
 
-const PokemonList: React.FC<PokemonListProps> = ({ items }) => {
 	return (
-		<div className="pokemon-list">
-			{items.map(item => (
-				<div key={item.id} className="pokemon-card">
-					<img
-						src={item.imageUrl}
-						alt={item.name}
-						className="pokemon-image"
-					/>
-					<p className="pokemon-name">{item.name}</p>
-				</div>
-			))}
-		</div>
+		<>
+			<section className={`pokemon-list-container" ${type}`}>
+				<p className="pokemon-name"># {id}</p>
+				<p className="pokemon-name">{name}</p>
+				<img src={image} alt={name} />
+				<p className="pokemon-name">Type : {type}</p>
+			</section>
+		</>
 	);
-};
+}
 
 export default PokemonList;
