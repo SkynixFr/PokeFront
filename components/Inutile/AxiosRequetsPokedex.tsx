@@ -15,7 +15,7 @@ export default function AxiosRequetsPokedex() {
 		let config = {
 			method: 'get',
 			maxBodyLength: Infinity,
-			url: 'https://pokeapi.co/api/v2/pokemon?limit=20&offset=0'
+			url: 'https://pokeapi.co/api/v2/pokemon?limit=1000&offset=0'
 		};
 
 		axios

@@ -6,7 +6,10 @@ const ContenuPokedex = ({ todo }) => {
 	return (
 		<div>
 			<ul>
-				<li>{todo.name} </li>
+				<li>
+					{' '}
+					<h4>{todo.name}</h4>
+				</li>
 			</ul>
 		</div>
 	);

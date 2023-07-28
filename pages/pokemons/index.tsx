@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import AxiosRequets from '../../components/AxiosRequets';
+import AxiosRequets from '../../components/Inutile/AxiosRequets';
 import AGGrid from '../../components/AGGrid';
 
 const pokemon = () => {
