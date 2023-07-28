@@ -15,7 +15,7 @@ const DeleteAccountPage = () => {
 		// Si le token JWT n'est pas présent, rediriger vers la page de connexion
 		if (!token) {
 			alert('Vous devez vous connecter pour accéder à cette page');
-			router.push('/clients/login');
+			router.push('../login');
 		} else {
 			// Stocker la valeur du token JWT dans l'état local
 			setJwtToken(token);

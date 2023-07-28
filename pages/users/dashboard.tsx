@@ -10,7 +10,7 @@ const DashboardPage = () => {
 		const jwtToken = localStorage.getItem('jwtToken');
 		// Si le token JWT n'est pas présent, rediriger vers la page de connexion
 		if (!jwtToken) {
-			router.push('/clients/login');
+			router.push('../login');
 		} else {
 			// Si le token JWT est présent, vous pouvez ajouter ici toute logique
 			// spécifique à la page de dashboard, comme charger les données de l'utilisateur, etc.
