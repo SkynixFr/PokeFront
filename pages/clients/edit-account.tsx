@@ -12,6 +12,7 @@ const EditAccountPage = () => {
 	const [errorMessage, setErrorMessage] = useState<string>('');
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isEditingPassword, setIsEditingPassword] = useState<boolean>(false);
+	const [isEditingEmail, setIsEditingEmail] = useState<boolean>(false);
 	const router = useRouter();
 	const [showLoading, setShowLoading] = useState<boolean>(false);
 	const [jwtToken, setJwtToken] = useState<string | null>(null);
@@ -114,15 +115,6 @@ const EditAccountPage = () => {
 					/>
 				</div>
 				<div>
-					<label htmlFor="email">Email</label>
-					<input
-						id="email"
-						type="email"
-						value={email}
-						onChange={e => setEmail(e.target.value)}
-					/>
-				</div>
-				<div>
 					<label htmlFor="password">Mot de passe actuel</label>
 					<input
 						id="password"
@@ -131,6 +123,19 @@ const EditAccountPage = () => {
 						onChange={e => setPassword(e.target.value)}
 					/>
 				</div>
+				{isEditingEmail && (
+					<>
+						<div>
+							<label htmlFor="email">Email</label>
+							<input
+								id="email"
+								type="email"
+								value={email}
+								onChange={e => setEmail(e.target.value)}
+							/>
+						</div>
+					</>
+				)}
 				{isEditingPassword && (
 					<>
 						<div>
@@ -155,6 +160,13 @@ const EditAccountPage = () => {
 						</div>
 					</>
 				)}
+				<button
+					type="button"
+					onClick={() => setIsEditingEmail(!isEditingEmail)}
+				>
+					Modifier le mail
+				</button>
+
 				<button
 					type="button"
 					onClick={() => setIsEditingPassword(!isEditingPassword)}
