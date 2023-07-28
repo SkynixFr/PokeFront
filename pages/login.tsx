@@ -2,66 +2,56 @@ import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import axios from 'axios';
-import ReactLoading from 'react-loading';
+import Form from '../components/form';
 
 const LoginPage = () => {
-	const [email, setEmail] = useState<string>('');
-	const [password, setPassword] = useState<string>('');
 	const [errorMessage, setErrorMessage] = useState<string>('');
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [showConfirmation, setShowConfirmation] = useState<boolean>(false); // State to control the confirmation window
+	const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
 	const router = useRouter();
 
-	// // Function to verify the validity of the email "user"@"mail"."fin"
-	// const isValidEmail = (email: string): boolean => {
-	// 	const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-	// 	return emailRegex.test(email);
-	// };
-
-	// Function to handle form submission
-	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
+	const handleSubmit = async (data: { [key: string]: string }) => {
 		setErrorMessage(''); // Reset error message
 		setIsLoading(true); // Set loading state to true during API call
 
 		try {
 			// Check if fields are not empty
-			if (!email || !password) {
+			if (!data.Pseudo || !data.password) {
 				setErrorMessage('Tous les champs doivent être remplis.');
 				setIsLoading(false); // Reset loading state
 				return;
 			}
-			// // Check if the email is valid before calling the API
-			// if (!isValidEmail(email)) {
-			// 	setErrorMessage('Email invalide');
-			// 	setIsLoading(false); // Reset loading state
-			// 	return;
-			// }
-			// API call to verify login
+
+			// API call to verify register
 			const response = await axios.post(
 				'http://localhost:8080/api/v2/users/login',
-				{ data: email, password: password },
+				{
+					data: data.Pseudo,
+					password: data.password
+				},
 				{
 					headers: {
 						'Content-Type': 'application/json'
 					}
 				}
 			);
-			console.log(response);
 
-			const data = response.data;
+			const responseData = response.data;
 
 			if (response.status === 200) {
 				// Login successful, show confirmation window and redirect to dashboard after 2 seconds
-				setErrorMessage(data.message);
+				setErrorMessage(responseData.message);
 				setShowConfirmation(true);
 				setIsLoading(false); // Reset loading state
 
 				setTimeout(() => {
 					setShowConfirmation(false);
-					localStorage.setItem('jwtToken', data.token); // Save JWT token to localStorage
-					router.push('./dashboard');
+					//On stocke le token jwt accessToken dans le localStorage
+					localStorage.setItem('jwtToken', responseData.accessToken);
+					//On stocke le refresh Token dans le localStorage
+					localStorage.setItem('refreshToken', responseData.refreshToken);
+					router.push('./pages/dashboard');
 				}, 2000);
 			} else {
 				// Login failed, display error message
@@ -77,41 +67,28 @@ const LoginPage = () => {
 		}
 	};
 
+	const formFields = [
+		{
+			name: 'Pseudo',
+			label: 'Pseudo',
+			type: 'text'
+		},
+		{
+			name: 'password',
+			label: 'Mot de passe',
+			type: 'password'
+		}
+	];
+
 	return (
 		<div>
 			<h1>Page de connexion</h1>
-			<form onSubmit={handleSubmit}>
-				<div>
-					<label htmlFor="email">Email</label>
-					<input
-						id="email"
-						type="text"
-						value={email}
-						onChange={e => setEmail(e.target.value)}
-					/>
-				</div>
-				<div>
-					<label htmlFor="password">Mot de passe</label>
-					<input
-						id="password"
-						type="password"
-						value={password}
-						onChange={e => setPassword(e.target.value)}
-					/>
-				</div>
-				<button type="submit" disabled={isLoading}>
-					{isLoading ? (
-						<ReactLoading
-							type="spin"
-							color="#ffffff"
-							height={20}
-							width={20}
-						/>
-					) : (
-						'Se connecter'
-					)}
-				</button>
-			</form>
+			<Form
+				fields={formFields}
+				onSubmit={handleSubmit}
+				isLoading={isLoading}
+				submitButtonLabel="Se connecter" // Texte personnalisé pour le bouton de soumission
+			/>
 
 			{/* Confirmation window */}
 			{showConfirmation && (
@@ -124,7 +101,7 @@ const LoginPage = () => {
 			{errorMessage && <p>{errorMessage}</p>}
 
 			<p>Pas encore de compte ?</p>
-			<Link href="./create-account">
+			<Link href="./register">
 				<p>Créer un compte</p>
 			</Link>
 

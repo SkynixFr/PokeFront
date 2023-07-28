@@ -21,7 +21,7 @@ const EditAccountPage = () => {
 		const token = localStorage.getItem('jwtToken');
 		if (!token) {
 			alert('Vous devez vous connecter pour accéder à cette page');
-			router.push('/clients/login');
+			router.push('../login');
 		} else {
 			setJwtToken(token);
 		}

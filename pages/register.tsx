@@ -1,13 +1,10 @@
-import { useState, FormEvent, useEffect } from 'react';
+import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import axios from 'axios';
+import Form, { FormField } from '../components/form';
 
 const CreateAccountPage = () => {
-	const [email, setEmail] = useState<string>('');
-	const [password, setPassword] = useState<string>('');
-	const [confirmPassword, setConfirmPassword] = useState<string>('');
-	const [pseudo, setPseudo] = useState<string>('');
 	const [errorMessage, setErrorMessage] = useState<string>('');
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isAccountCreated, setIsAccountCreated] = useState<boolean>(false);
@@ -19,29 +16,39 @@ const CreateAccountPage = () => {
 		const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 		return emailRegex.test(email);
 	};
-
-	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		setErrorMessage(''); // Réinitialise le message d'erreur
+	const handleSubmit = async (data: { [key: string]: string }) => {
+		setErrorMessage(''); // Reset error message
 		setIsLoading(true);
 
 		try {
 			// Check for empty fields
-			if (!email || !password || !confirmPassword || !pseudo) {
+			if (
+				!data.email ||
+				!data.password ||
+				!data.confirmPassword ||
+				!data.pseudo
+			) {
 				setErrorMessage('Tous les champs doivent être remplis.');
 				setIsLoading(false);
 				return;
 			}
-			//Vérification Email et mot de passe avec mot de passe de confirmation
-			if (!isValidEmail(email) || password !== confirmPassword) {
+			// Verify Email and password with password confirmation
+			if (
+				!isValidEmail(data.email) ||
+				data.password !== data.confirmPassword
+			) {
 				setErrorMessage('Email ou mot de passe incorrect');
 				setIsLoading(false);
 				return;
 			}
-			// Appel à l'API pour la vérification du login
+			// API call to verify register
 			const response = await axios.post(
-				'http://localhost:8080/api/v1/client/register',
-				{ mailClient: email, mdpClient: password, username: pseudo },
+				'http://localhost:8080/api/v2/users/register',
+				{
+					email: data.email,
+					password: data.password,
+					username: data.pseudo
+				},
 				{
 					headers: {
 						'Content-Type': 'application/json'
@@ -58,7 +65,7 @@ const CreateAccountPage = () => {
 				// Redirect to the login page after 3 seconds
 				setTimeout(() => {
 					setIsAccountCreated(false);
-					router.push('/clients/login');
+					router.push('/login');
 				}, 3000);
 			}
 		} catch (error) {
@@ -79,58 +86,47 @@ const CreateAccountPage = () => {
 		}
 	};
 
+	const formFields: FormField[] = [
+		{
+			name: 'pseudo',
+			label: 'Pseudo',
+			type: 'text'
+		},
+		{
+			name: 'email',
+			label: 'Email',
+			type: 'email'
+		},
+		{
+			name: 'password',
+			label: 'Mot de passe',
+			type: 'password'
+		},
+		{
+			name: 'confirmPassword',
+			label: 'Confirmer le mot de passe',
+			type: 'password'
+		}
+	];
+
 	return (
 		<div>
 			<h1>Créer un compte</h1>
-			<form onSubmit={handleSubmit}>
-				{/* Form fields */}
-				<div>
-					<label htmlFor="pseudo">Pseudo</label>
-					<input
-						id="pseudo"
-						type="text"
-						value={pseudo}
-						onChange={e => setPseudo(e.target.value)}
-					/>
-				</div>
-				<div>
-					<label htmlFor="email">Email</label>
-					<input
-						id="email"
-						type="email"
-						value={email}
-						onChange={e => setEmail(e.target.value)}
-					/>
-				</div>
-				<div>
-					<label htmlFor="password">Mot de passe</label>
-					<input
-						id="password"
-						type="password"
-						value={password}
-						onChange={e => setPassword(e.target.value)}
-					/>
-				</div>
-				<div>
-					<label htmlFor="confirmPassword">
-						Confirmer le mot de passe
-					</label>
-					<input
-						id="confirmPassword"
-						type="password"
-						value={confirmPassword}
-						onChange={e => setConfirmPassword(e.target.value)}
-					/>
-				</div>
-				<button type="submit">Créer le compte</button>
-			</form>
-			{isLoading && <p>Loading...</p>}{' '}
-			{/* Render loading screen if isLoading is true */}
+			<Form
+				fields={formFields}
+				onSubmit={handleSubmit}
+				isLoading={isLoading}
+				submitButtonLabel="Créer le compte" // Texte personnalisé pour le bouton de soumission
+			/>
+
+			{isLoading && <p>Loading...</p>}
 			{errorMessage && <p>{errorMessage}</p>}
+
 			<p>Déjà un compte ?</p>
 			<Link href="./login">
 				<p>Se connecter</p>
 			</Link>
+
 			{isAccountCreated && (
 				<div className="toast-notification">
 					<p>Le compte a été créé avec succès!</p>

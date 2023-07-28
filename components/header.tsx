@@ -23,7 +23,7 @@ const Header = () => {
 		setTimeout(() => {
 			setIsLoggedIn(false); // Réinitialiser l'état isLoggedIn après la déconnexion
 			setIsLoggingOut(false); // Désactiver l'état isLoggingOut après la déconnexion
-			router.push('/clients/login');
+			router.push('./login');
 		}, 2000);
 	};
 
