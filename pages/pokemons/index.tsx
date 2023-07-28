@@ -1,5 +1,15 @@
-const Pokemons = () => {
-	return <h1>Liste des pokémons</h1>;
-};
+'use client';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import AxiosRequets from '../../components/Inutile/AxiosRequets';
+import AGGrid from '../../components/AGGrid';
 
-export default Pokemons;
+const pokemon = () => {
+	return (
+		<>
+			<AxiosRequets />
+			<AGGrid />
+		</>
+	);
+};
+export default pokemon;
