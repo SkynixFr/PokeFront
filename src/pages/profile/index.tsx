@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Profile.module.css';
 import axios, { AxiosResponse } from 'axios';
-import PokemonList from '../../components/pokemonList';
+//import PokemonList from '../../components/pokemonList';
 
 interface UserData {
 	id: string;
@@ -18,7 +18,7 @@ const Profil: React.FC = () => {
 
 	useEffect(() => {
 		const jwtToken =
-			'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUyMCIsInVzZXJuYW1lIjoiTmV3dCIsImVtYWlsIjoic2FyYW55dUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCRNYnl3UEZiWEZMLlowWk12SUZ0bGdPcU9vaVlZUVZicDF4aDBFdEh0cW5hTy8vaXp1T0EvTyIsInBva2VkZXgiOlsicGlrYWNodSIsInJpb2x1Il0sImNyZWF0ZWRBdCI6IjIwMjMtMDctMjhUMDc6MDU6MTQuNDA0WiIsInVwZGF0ZUF0IjoiMjAyMy0wNy0yOFQxMzoxMjo1OS4yNjNaIiwiaWF0IjoxNjkwNTUyNTY4LCJleHAiOjE2OTA1NTMxNjh9.KHXjgDZ3UgCRbXF-D_HAvabTHfyehSfK9BR5UN-66fg';
+			'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUxZSIsInVzZXJuYW1lIjoiTHVmZnlzb25pYyIsImVtYWlsIjoicmlja3lAZ21haWwuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkeUFhQndmYzVPYVVrOU84TG1CTXprZWlubW14OC9aTmpwSW1UcnkvbEI3SVVVLnBNMloucksiLCJwb2tlZGV4IjpbInBpa2FjaHUiLCJyaW9sdSJdLCJjcmVhdGVkQXQiOiIyMDIzLTA3LTI4VDA3OjA1OjEzLjk1N1oiLCJ1cGRhdGVBdCI6IjIwMjMtMDctMjhUMTM6MTU6MzYuOTU2WiIsImlhdCI6MTY5MDU1NTY5MiwiZXhwIjoxNjkwNTU2MjkyfQ.j7j8P9l6PmCSNLt8rBAN7LkmLWAE2XE24GT3Bt3cYbs';
 		localStorage.setItem('jwtToken', jwtToken);
 
 		const config = {
@@ -83,11 +83,11 @@ const Profil: React.FC = () => {
 			</div>
 
 			<div className="pokemon-list">
-				{trainerPokedex.map(item => (
+				{/* {trainerPokedex.map(item => (
 					<div key={item} className="pokemon-card">
 						<p className="pokemon-name">{item}</p>
 					</div>
-				))}
+				))} */}
 			</div>
 		</>
 	);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import ContenuPokedex from './ContenuPokedex';
+//import ContenuPokedex from './ContenuPokedex';
 
 const numberRequetsType = 21;
 const numberRequetsPic = 2;
@@ -83,9 +83,9 @@ export default function AxiosRequetsPokedex() {
 	return (
 		<>
 			<h3>Liste des pokémons provenant de PokéAPI</h3>
-			{dataName.map(todo => (
+			{/* {dataName.map(todo => (
 				<ContenuPokedex key={todo.name} todo={todo} />
-			))}
+			))} */}
 		</>
 	);
 }
