@@ -1,12 +1,5 @@
-import Link from 'next/link';
-import Login from './login';
-
 const Home = () => {
-	return (
-		<>
-			<Login></Login>
-		</>
-	);
+	return <h1>Home</h1>;
 };
 
 export default Home;

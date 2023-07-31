@@ -27,14 +27,13 @@
 	},
 	"homepage": "https://github.com/SkynixFr/PokeFront#readme",
 	"dependencies": {
-		"ag-grid-community": "^30.0.5",
-		"ag-grid-react": "^30.0.5",
 		"axios": "^1.4.0",
 		"next": "^13.4.12",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"react-router-dom": "^6.14.2",
-		"react-loading": "^2.0.3"
+		"react-icons": "^4.10.1",
+		"react-loading": "^2.0.3",
+		"react-router-dom": "^6.14.2"
 	},
 	"devDependencies": {
 		"@types/node": "20.4.4",
