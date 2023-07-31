@@ -1,12 +1,10 @@
 import Head from 'next/head';
 import type { AppProps } from 'next/app';
 import Header from '../components/header';
-import { useRouter } from 'next/router';
 
-import './styles/styles.scss';
+// import './src/styles.scss';
 
 const App = ({ Component, pageProps }: AppProps) => {
-	const router = useRouter();
 	return (
 		<>
 			<Head>
@@ -18,7 +16,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 				<title>PokeFront</title>
 			</Head>
 			<main>
-				{router.asPath === '/login' || 'register' ? '' : <Header></Header>}
+				<Header></Header>
 				<Component {...pageProps}></Component>
 			</main>
 		</>
