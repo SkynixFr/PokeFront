@@ -18,7 +18,7 @@ interface FormProps {
 	where: string;
 }
 
-const Form: React.FC<FormProps> = ({ fields, labelButton }) => {
+const Form: React.FC<FormProps> = ({ fields, labelButton, where }) => {
 	const [formData, setFormData] = useState<{ [key: string]: string }>({});
 	const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>(
 		{}
@@ -89,7 +89,7 @@ const Form: React.FC<FormProps> = ({ fields, labelButton }) => {
 					email: formData.email,
 					password: formData.password
 				});
-				router.push('/login');
+				router.push(where);
 			} catch (error) {
 				if (axios.isAxiosError(error)) {
 					setApiError(error.response?.data);
@@ -106,7 +106,7 @@ const Form: React.FC<FormProps> = ({ fields, labelButton }) => {
 				);
 				console.log(res);
 
-				router.push('/');
+				router.push(where);
 			} catch (error) {
 				if (axios.isAxiosError(error)) {
 					setApiError(error.response?.data);
