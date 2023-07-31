@@ -2,6 +2,7 @@ import { FormEventHandler, useState } from 'react';
 import axios from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useRouter } from 'next/router';
+import Cookies from 'js-cookie';
 
 interface FormField {
 	type: string;
@@ -18,7 +19,7 @@ interface FormProps {
 	where: string;
 }
 
-const Form: React.FC<FormProps> = ({ fields, labelButton }) => {
+const Form: React.FC<FormProps> = ({ fields, labelButton, where }) => {
 	const [formData, setFormData] = useState<{ [key: string]: string }>({});
 	const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>(
 		{}
@@ -89,7 +90,7 @@ const Form: React.FC<FormProps> = ({ fields, labelButton }) => {
 					email: formData.email,
 					password: formData.password
 				});
-				router.push('/login');
+				router.push(where);
 			} catch (error) {
 				if (axios.isAxiosError(error)) {
 					setApiError(error.response?.data);
@@ -104,9 +105,18 @@ const Form: React.FC<FormProps> = ({ fields, labelButton }) => {
 						password: formData.password
 					}
 				);
-				console.log(res);
+				const accessToken = res.data.accessToken;
+				// Le cookies de l'accessToken expire dans 10 min max
+				Cookies.set('accessToken', accessToken, {
+					expires: 10 / (24 * 60)
+				});
+				const refreshToken = res.data.refreshToken;
+				//le cookie du refreshToken s'expire dans 1 jour
+				Cookies.set('refreshToken', refreshToken, {
+					expires: 1
+				});
 
-				router.push('/');
+				router.push(where);
 			} catch (error) {
 				if (axios.isAxiosError(error)) {
 					setApiError(error.response?.data);
