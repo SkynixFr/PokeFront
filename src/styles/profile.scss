@@ -1,3 +1,162 @@
 .profil {
-	display: flex;
+	width: 100%;
+	height: auto;
+	position: relative;
+
+	.user-infos {
+		width: 80%;
+		height: 250px;
+		margin: 0 auto;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 100px 0 0 0;
+
+		.user-img {
+			width: auto;
+			height: auto;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-grow: 1;
+
+			img {
+				width: 150px;
+				height: 150px;
+				border-radius: 15px;
+			}
+		}
+
+		.user-details {
+			width: auto;
+			height: 100%;
+			display: flex;
+			justify-content: space-around;
+			align-items: flex-start;
+			flex-flow: column;
+			flex-grow: 2;
+
+			.user-account {
+				width: 100%;
+				.user-username {
+					width: 100%;
+					display: flex;
+					h1 {
+						font-size: 2em;
+						font-weight: bold;
+						margin: 0 15px 0 0;
+					}
+				}
+
+				span {
+					font-size: 0.9em;
+					color: #686565;
+				}
+			}
+
+			ul {
+				width: 100%;
+				height: auto;
+				display: flex;
+				justify-content: flex-start;
+				align-items: center;
+				flex-grow: 1;
+
+				li {
+					width: 100%;
+					height: 30px;
+					display: flex;
+					justify-content: flex-start;
+					align-items: center;
+
+					svg {
+						width: 20px;
+						height: 20px;
+						color: #686565;
+					}
+					.user-email {
+						font-size: 1.1em;
+						padding: 0 0 0 15px;
+					}
+				}
+			}
+		}
+
+		.user-edition {
+			display: flex;
+			justify-content: space-around;
+			align-items: center;
+			max-width: 300px;
+			flex-grow: 1;
+
+			button[type='submit'] {
+				width: max-content;
+				height: 40px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				padding: 10px;
+				border: none;
+				border-radius: 8px;
+				cursor: pointer;
+				position: relative;
+
+				span {
+					margin: 0 0 0 15px;
+				}
+			}
+
+			.user-delete {
+				background-color: red;
+				color: #fff;
+
+				&::after {
+					content: '';
+					background-image: url('../public/images/pikachu_faché.png');
+					background-size: cover;
+					display: block;
+					width: 100px;
+					height: 100px;
+					position: absolute;
+					top: -50%;
+					right: -200%;
+					opacity: 0;
+					transition: 0.5s all;
+				}
+
+				&:hover {
+					&::after {
+						right: -100%;
+						opacity: 1;
+					}
+				}
+			}
+
+			.user-update {
+				background-color: green;
+				color: #fff;
+
+				&::after {
+					content: '';
+					background-image: url('../public/images/pikachu_content.png');
+					background-size: cover;
+					display: block;
+					width: 100px;
+					height: 100px;
+					position: absolute;
+					top: -50%;
+					right: 200%;
+					opacity: 0;
+					transition: 0.5s all;
+				}
+
+				&:hover {
+					&::after {
+						right: 100%;
+						opacity: 1;
+					}
+				}
+			}
+		}
+	}
 }

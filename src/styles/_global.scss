@@ -7,4 +7,28 @@ body {
 	height: 100%;
 	font-size: 1em;
 	font-family: 'Clash Display', sans-serif;
+	overflow: hidden;
+}
+
+.underline {
+	border: none;
+	border-bottom: 1px solid #000;
+
+	&.profile {
+		width: 80%;
+		margin: 0 auto;
+		padding: 50px 0 0 0;
+	}
+}
+
+.mouse-follower {
+	position: absolute;
+	pointer-events: none;
+	transform: translate(-50%, -50%);
+	z-index: 9999;
+}
+
+.mouse-follower img {
+	width: 150px;
+	height: 150px;
 }

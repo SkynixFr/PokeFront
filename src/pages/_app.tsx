@@ -4,6 +4,7 @@ import Header from '../components/header';
 import { useRouter } from 'next/router';
 
 import '../styles/styles.scss';
+import MouseFollower from '../components/mouseFollower';
 
 const App = ({ Component, pageProps }: AppProps) => {
 	const router = useRouter();
@@ -18,6 +19,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 				<title>PokeFront</title>
 			</Head>
 			<main>
+				<MouseFollower></MouseFollower>
 				{router.asPath === '/login' || '/register' ? '' : <Header></Header>}
 				<Component {...pageProps}></Component>
 			</main>

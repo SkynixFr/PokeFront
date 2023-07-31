@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios, { Axios, AxiosResponse } from 'axios';
 import { faker } from '@faker-js/faker';
-import { FaEnvelope, FaPencil } from 'react-icons/fa6';
+import { FaEnvelope, FaPencil, FaTrashCan } from 'react-icons/fa6';
 
 export async function getServerSideProps() {
 	const avatar = faker.image.avatarGitHub();
 
 	const jwtToken =
-		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUxZSIsInVzZXJuYW1lIjoiTHVmZnlzb25pYyIsImVtYWlsIjoicmlja3lAZ21haWwuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkVG9IZUQ4ZUtvMUJ3NFBnaEIyMGExLjR3amJZUFNmZWlsS3NTaFdjRi9hUFQ5d3RFa3FaalciLCJwb2tlZGV4IjpbInBpa2FjaHUiLCJyaW9sdSIsImx1Y2FyaW8iLCJ2aWN0aW5pIl0sImNyZWF0ZWRBdCI6IjIwMjMtMDctMjhUMDc6MDU6MTMuOTU3WiIsInVwZGF0ZUF0IjoiMjAyMy0wNy0zMVQxMTo0NTozMi40MDdaIiwiaWF0IjoxNjkwODA0OTczLCJleHAiOjE2OTA4MDU1NzN9.4sAMci-jHpKw2HY3HP3N1OSEqcqsN2iuCft1Kx7iMXw';
+		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUxZSIsInVzZXJuYW1lIjoiTHVmZnlzb25pYyIsImVtYWlsIjoicmlja3lAZ21haWwuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkVG9IZUQ4ZUtvMUJ3NFBnaEIyMGExLjR3amJZUFNmZWlsS3NTaFdjRi9hUFQ5d3RFa3FaalciLCJwb2tlZGV4IjpbInBpa2FjaHUiLCJyaW9sdSIsImx1Y2FyaW8iLCJ2aWN0aW5pIl0sImNyZWF0ZWRBdCI6IjIwMjMtMDctMjhUMDc6MDU6MTMuOTU3WiIsInVwZGF0ZUF0IjoiMjAyMy0wNy0zMVQxMTo0NTozMi40MDdaIiwiaWF0IjoxNjkwODE4MTgzLCJleHAiOjE2OTA4MTg3ODN9.o1FsKX_f3F4XsUD_EuUjjg-s6GMNufIK4LW7mVlvKzk';
 
 	const config = {
 		headers: {
@@ -103,24 +103,36 @@ const Profile = ({
 							<img src={avatar} alt="Avatar profile" />
 						</div>
 						<div className="user-details">
-							<h1>{userData.username}</h1>
+							<div className="user-account">
+								<div className="user-username">
+									<h1>{userData.username}</h1>
+								</div>
+
+								<span>
+									Compte créé le{' '}
+									{formatDateToFrench(userData.createdAt)}
+								</span>
+							</div>
+
 							<ul>
 								<li>
 									<FaEnvelope />
 									<span className="user-email">{userData.email}</span>
 								</li>
 							</ul>
-							<span>
-								Compte créé le {formatDateToFrench(userData.createdAt)}
-							</span>
 						</div>
 						<div className="user-edition">
-							<button type="submit">
+							<button type="submit" className="user-update">
 								<FaPencil />
-								<span>Modifier le compte</span>
+								<span>Modifier </span>
+							</button>
+							<button type="submit" className="user-delete">
+								<FaTrashCan />
+								<span>Supprimer </span>
 							</button>
 						</div>
 					</div>
+					<div className="underline profile"></div>
 					<div className="user-pokedex">
 						<h1>Pokédex</h1>
 						<span className="user-pokedex-subtitle">
@@ -134,33 +146,6 @@ const Profile = ({
 						</div>
 					</div>
 				</section>
-				// <section>
-				// 	<h1>Profil d'utilisateur</h1>
-				// 	<div className="profileContainer">
-				// 		<h1 className="trainerName">Pseudo : {data.username}</h1>
-				// 		<h1 className="trainerEmail">Email : {data.email}</h1>
-
-				// 		<div className="progressBar">
-				// 			<div
-				// 				className="progress"
-				// 				style={{ width: `${progression}%` }}
-				// 			></div>
-				// 		</div>
-
-				// 		<p className="progressLabel">
-				// 			Progression du pokédex : {progression}%
-				// 		</p>
-				// 	</div>
-
-				// 	{/* Pokédex de l'utilisateur */}
-				// 	<div className="pokemonList">
-				// 		{data.pokedex.map(pokemon => (
-				// 			<div key={pokemon} className="pokemonCard">
-				// 				<p className="pokemonName">{pokemon}</p>
-				// 			</div>
-				// 		))}
-				// 	</div>
-				// </section>
 			)}
 		</>
 	);
