@@ -236,14 +236,16 @@
 			height: max-content;
 			display: grid;
 			grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-			gap: 15px;
 			margin: 50px 0 0 0;
 
 			.pokedex-card {
-				width: 100%;
-				height: auto;
+				width: 60%;
+				height: 150px;
+				display: flex;
+				flex-direction: column;
 				padding: 10px;
 				border-radius: 10px;
+				box-sizing: content-box;
 
 				.card-id {
 					width: 100%;
@@ -259,9 +261,10 @@
 					display: flex;
 					justify-content: center;
 					align-items: center;
+
 					img {
-						width: 150px;
-						height: 150px;
+						width: 100px;
+						height: 100px;
 						border-radius: 10px;
 					}
 				}

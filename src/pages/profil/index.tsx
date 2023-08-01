@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Profile.module.css';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 //import PokemonList from '../../components/pokemonList';
 
 interface UserData {
@@ -18,7 +18,7 @@ const Profil: React.FC = () => {
 
 	useEffect(() => {
 		const jwtToken =
-			'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUxZSIsInVzZXJuYW1lIjoiTHVmZnlzb25pYyIsImVtYWlsIjoicmlja3lAZ21haWwuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkeUFhQndmYzVPYVVrOU84TG1CTXprZWlubW14OC9aTmpwSW1UcnkvbEI3SVVVLnBNMloucksiLCJwb2tlZGV4IjpbInBpa2FjaHUiLCJyaW9sdSJdLCJjcmVhdGVkQXQiOiIyMDIzLTA3LTI4VDA3OjA1OjEzLjk1N1oiLCJ1cGRhdGVBdCI6IjIwMjMtMDctMjhUMTM6MTU6MzYuOTU2WiIsImlhdCI6MTY5MDU1NTY5MiwiZXhwIjoxNjkwNTU2MjkyfQ.j7j8P9l6PmCSNLt8rBAN7LkmLWAE2XE24GT3Bt3cYbs';
+			'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUxZSIsInVzZXJuYW1lIjoiTHVmZnlzb25pYyIsImVtYWlsIjoicmlja3lAZ21haWwuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkVG9IZUQ4ZUtvMUJ3NFBnaEIyMGExLjR3amJZUFNmZWlsS3NTaFdjRi9hUFQ5d3RFa3FaalciLCJwb2tlZGV4IjpbInBpa2FjaHUiLCJyaW9sdSIsImx1Y2FyaW8iLCJ2aWN0aW5pIiwibWV3IiwiZWV2ZWUiXSwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yOFQwNzowNToxMy45NTdaIiwidXBkYXRlQXQiOiIyMDIzLTA4LTAxVDA5OjQyOjA2LjU2OVoiLCJpYXQiOjE2OTA4ODkxOTMsImV4cCI6MTY5MDg4OTc5M30.E9y_7_B8PS8fzeW5mh8cegQfK00d35jgnYIdaew__WE';
 		localStorage.setItem('jwtToken', jwtToken);
 
 		const config = {
