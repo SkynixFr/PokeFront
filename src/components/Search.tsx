@@ -1,47 +1,51 @@
-import React from 'react'
-import { useState, useEffect } from 'react'
-import axios from 'axios'
-import { describe } from 'node:test'
-
+import React from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { describe } from 'node:test';
 
 export function Search() {
+	const [datas, setdatas] = useState([]);
+	const [searchTerm, setSearchTerm] = useState('');
 
-    const [data, setData] = useState([])
+	const handleSearchTerm = e => {
+		let value = e.target.value;
+		setSearchTerm(value.toLowerCase());
+	};
 
-    useEffect(() => {
+	console.log('searchterm ', searchTerm);
 
-        // const response = await axios.get(
-		// 	'https://pokeapi.co/api/v2/pokemon/pikachu'
-		// );
+	useEffect(() => {
+		fetch('https://pokeapi.co/api/v2/pokemon/' + { searchTerm })
+			.then(response => response.json())
+			.then(json => setdatas(json));
 
-		// const data = response.data;
+		// requete par type : https://pokeapi.co/api/v2/type/{id or name}/
+	}, []);
 
-        fetch('https://pokeapi.co/api/v2/pokemon/pikachu')
-        .then((response) => response.json())
-        .then((json) => setData(json));
+	console.log('datas search ', datas);
 
-        // requete par type : https://pokeapi.co/api/v2/type/{id or name}/
-    }, [])
-
-    console.log('data search ', data)
-
-    return (
-        <>
-            <div className='searchBar'>
-                <input type="text" name="searchBar" id="searchBar" placeholder="Rechercher" />
-                
-            </div>
-            <div className='search__result' key={data.id}> 
-                <p> # {data.id} </p>
-				<p> {data.name} </p>
-            </div>
-        </>
-        
-    )
+	return (
+		<>
+			<div className="searchBar">
+				<input
+					type="text"
+					name="searchBar"
+					id="currentTextSearchBar"
+					placeholder="Rechercher"
+					onChange={handleSearchTerm}
+				/>
+				<button onChange={Search}>Valider</button>
+			</div>
+			<div className="search__result" key={datas.id}>
+				<p> {datas.id} </p>
+				<p> {datas.name} </p>
+			</div>
+		</>
+	);
 }
 
-export default Search
+export default Search;
 
-// <img src={data.sprites.front_default} alt={data.name}/> 
+// <img src={datas.sprites.front_default} alt={datas.name}/>
 
-// <p> Type : {data.types[0].type.name} </p>
+// <p> Type : {datas.types[0].type.name} </p>
