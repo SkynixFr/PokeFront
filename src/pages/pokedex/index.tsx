@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { Pokemon } from './interface';
+import Search from '../../components/Search';
 
 interface Pokemons {
 	name: string;
@@ -14,7 +15,7 @@ export async function getServerSideProps() {
 		);
 
 		const data = response.data;
-		console.log(data);
+		// console.log(data);
 
 		const updatedResults = await Promise.all(
 			data.results.map(async (pokemon: Pokemons) => {
@@ -135,6 +136,9 @@ export default function Pokemon({ data }: { data: PokemonResponse }) {
 	};
 	return (
 		<section className="{pokemon-list-container}">
+			<Search /><button onClick={Search}>Valider</button>
+			
+
 			<button onClick={fetchDataFromAPIprev}>Précédent</button>
 			<button onClick={fetchDataFromAPInext}>Suivant</button>
 			<ul>
@@ -157,9 +161,4 @@ export default function Pokemon({ data }: { data: PokemonResponse }) {
 }
 
 
-// pokemons.map(pokemon => (
-// 						<li key={pokemon.name}>
-// 							# {pokemon.id} |{pokemon.name} |
-// 							<img src={pokemon.image} /> | {pokemon.type}
-// 						</li>
-// 					))
+
