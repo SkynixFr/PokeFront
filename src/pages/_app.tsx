@@ -20,7 +20,11 @@ const App = ({ Component, pageProps }: AppProps) => {
 			</Head>
 			<main>
 				<MouseFollower></MouseFollower>
-				{router.asPath === '/login' || '/register' ? '' : <Header></Header>}
+				{router.asPath === '/login' || router.asPath === '/register' ? (
+					''
+				) : (
+					<Header></Header>
+				)}
 				<Component {...pageProps}></Component>
 			</main>
 		</>
