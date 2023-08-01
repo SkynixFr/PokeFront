@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 const Header = () => {
 	const router = useRouter();
@@ -30,22 +31,28 @@ const Header = () => {
 	return (
 		<header>
 			<h1>Menu</h1>
-			{isLoggedIn ? (
+			<ul>
+				<li>
+					<Link href="/pokedex">Pokedex</Link>
+				</li>
+				<li>
+					<Link href="/user/me">Profil</Link>
+				</li>
+			</ul>
+			{/* {isLoggedIn ? (
 				<>
-					<a href="./edit-account">Modifier le compte</a>
-					<a href="./delete-account">Supprimer le compte</a>
 					<button onClick={handleLogout} disabled={isLoggingOut}>
 						{isLoggingOut ? 'Déconnexion en cours...' : 'Se déconnecter'}
 					</button>
 				</>
-			) : null}
+			) : null} */}
 			{/* Afficher les liens "Se connecter" et "Créer un compte" uniquement si l'utilisateur n'est pas connecté */}
-			{!isLoggedIn && (
+			{/* {!isLoggedIn && (
 				<>
 					<a href="./login">Se connecter</a>
 					<a href="./create-account">Créer un compte</a>
 				</>
-			)}
+			)} */}
 		</header>
 	);
 };

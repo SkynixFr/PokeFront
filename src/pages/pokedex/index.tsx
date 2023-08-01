@@ -140,6 +140,21 @@ export default function Pokemon({ data }: { data: PokemonResponse }) {
 	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 		console.log(formData);
+
+		const response = await axios.get(
+			`https://pokeapi.co/api/v2/pokemon/${formData.searchPokemon}`
+		);
+		const pokemonDetails = [
+			{
+				id: response.data.id,
+				name: response.data.name,
+				image: response.data.sprites.front_default,
+				type: response.data.types[0].type.name
+			}
+		];
+
+		setPokemon(pokemonDetails);
+		console.log(pokemons);
 	}
 
 	// Au changement de la barre de recherche
@@ -147,8 +162,6 @@ export default function Pokemon({ data }: { data: PokemonResponse }) {
 		const { name, value } = event.target;
 		setFormData({ ...formData, [name]: value });
 	}
-
-	// fonction qui permet de
 
 	return (
 		<section className="{pokemon-list-container}">
@@ -159,7 +172,7 @@ export default function Pokemon({ data }: { data: PokemonResponse }) {
 					id="searchPokemon"
 					onChange={handleChange}
 				/>
-				<button onClick={Search}>Valider</button>
+				<button type="submit">Valider</button>
 			</form>
 
 			<button onClick={fetchDataFromAPIprev}>Précédent</button>
