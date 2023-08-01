@@ -1,43 +1,19 @@
 // import React from 'react';
-import axiosInstance, { setGlobalContext } from '../services/axiosInstance';
-import Cookies from 'js-cookie';
-
-// const SomePage: React.FC = () => {
-// 	const handleFetchUserData = async () => {
-// 		try {
-// 			const response = await axiosInstance.get('/users/me');
-// 			console.log('User data:', response.data);
-// 		} catch (error) {
-// 			console.log('Error:', error);
-// 		}
-// 	};
-
-// 	return (
-// 		<div>
-// 			<h1>Some Page</h1>
-// 			<button onClick={handleFetchUserData}>Fetch User Data</button>
-// 		</div>
-// 	);
-// };
-// export default SomePage;
-
+import axiosInstance from '../services/axiosInstance';
 import React, { useEffect, useState } from 'react';
-import axios, { Axios, AxiosResponse } from 'axios';
+import axios from 'axios';
 import { faker } from '@faker-js/faker';
 import { FaEnvelope, FaPencil } from 'react-icons/fa6';
-import { parse } from 'cookie';
+
 import { GetServerSidePropsContext } from 'next';
+import { setGlobalContext } from '../services/axiosInterceptor';
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
 	const avatar = faker.image.avatarGitHub();
 	try {
 		setGlobalContext(context);
-		const responseUser = await axiosInstance.get('/users/me'); // Use the axiosInstance with the config
-		// const responseUser = await axios.get(
-		// 	'http://localhost:8080/api/v2/users/me',
-		// 	config
-		// );
 
+		const responseUser = await axiosInstance.get('/users/me'); // Use the axiosInstance with the config
 		const responsePokemon = await axios.get(
 			'https://pokeapi.co/api/v2/pokedex/national'
 		);
@@ -46,7 +22,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			responseUser,
 			responsePokemon
 		]);
-
 		const user = dataUser.data;
 		const totalPokemon = dataPokemon.data.pokemon_entries.length;
 
