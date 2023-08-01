@@ -1,8 +1,22 @@
 .profil {
 	width: 100%;
-	height: auto;
+	height: 100vh;
 	position: relative;
+	background-image: url('../public/images/poke-camping.jpg');
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+	display: flex;
+	justify-content: center;
 
+	.profil-infos {
+		width: 80%;
+		height: 100vh;
+		background: rgba(255, 255, 255, 0.35);
+
+		backdrop-filter: blur(10px);
+		border: none;
+	}
 	.user-infos {
 		width: clamp(350px, 80%, 100%);
 		height: 250px;
@@ -49,7 +63,7 @@
 
 				span {
 					font-size: 0.9em;
-					color: #686565;
+					color: #232323;
 				}
 			}
 
@@ -71,7 +85,7 @@
 					svg {
 						width: 20px;
 						height: 20px;
-						color: #686565;
+						color: #232323;
 					}
 					.user-email {
 						font-size: 1.1em;
@@ -99,6 +113,7 @@
 				border-radius: 8px;
 				cursor: pointer;
 				position: relative;
+				font-family: 'Clash Display', sans-serif;
 
 				span {
 					margin: 0 0 0 15px;
@@ -201,16 +216,27 @@
 			}
 
 			.progress-bar {
-				width: 500px;
+				width: 400px;
 				height: 20px;
-				background-color: #f2f2f2;
+				background-color: #e0e0e0;
 				border-radius: 10px;
 				overflow: hidden;
 				position: relative;
 
 				.progress {
 					height: 100%;
-					background-color: green;
+					background-image: linear-gradient(
+						to right,
+						#94e189,
+						#87dc7a,
+						#7ad76b,
+						#6dc35c,
+						#5da935,
+						#55a22e,
+						#4b9227,
+						#40811f,
+						#328e22
+					);
 				}
 
 				.completion-text {
@@ -222,6 +248,7 @@
 					display: flex;
 					justify-content: center;
 					align-items: center;
+					font-size: 0.9em;
 				}
 			}
 		}
@@ -238,14 +265,14 @@
 				width: 100%;
 				height: auto;
 				padding: 10px;
-				border: 1px solid #686565;
 				border-radius: 10px;
 
 				.card-id {
 					width: 100%;
 					display: flex;
 					justify-content: flex-end;
-					color: #666666;
+
+					color: #000;
 				}
 
 				.card-sprite {
@@ -270,7 +297,8 @@
 
 					h1 {
 						font-size: 1.3em;
-						font-weight: bold;
+
+						color: #000;
 					}
 				}
 			}

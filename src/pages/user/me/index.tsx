@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import axios, { Axios, AxiosResponse } from 'axios';
+import React, { useState } from 'react';
+import axios from 'axios';
 import { faker } from '@faker-js/faker';
 import { FaEnvelope, FaPencil, FaTrashCan } from 'react-icons/fa6';
 import Image from 'next/image';
@@ -43,8 +43,14 @@ export async function getServerSideProps() {
 						`https://pokeapi.co/api/v2/pokemon/${pokemonName.toLowerCase()}`
 					);
 					const pokemonDetail = responsePokemonDetail.data;
+
+					const [firstChar, ...restofChars] = pokemonDetail.name;
+					const capitalizedName = `${firstChar.toUpperCase()}${restofChars.join(
+						''
+					)}`;
+
 					return {
-						name: pokemonDetail.name,
+						name: capitalizedName,
 						id: pokemonDetail.id,
 						sprite: pokemonDetail.sprites.front_default,
 						types: pokemonDetail.types.map(
@@ -64,12 +70,16 @@ export async function getServerSideProps() {
 			pokemon => pokemon !== null
 		);
 
+		const sortedPokemonData = [...filteredPokemonData].sort(
+			(pokemonA, pokemonB) => parseInt(pokemonA.id) - parseInt(pokemonB.id)
+		);
+
 		return {
 			props: {
 				user,
 				avatar,
 				totalPokemon,
-				pokemonData: filteredPokemonData
+				pokemonData: sortedPokemonData
 			}
 		};
 	} catch (error) {
@@ -130,6 +140,7 @@ const Profile = ({
 			? ((userData.pokedex.length / totalPokemon) * 100).toFixed(2)
 			: 0;
 
+	console.log(userData);
 	function formatDateToFrench(dateString: string): string {
 		const date = new Date(dateString);
 		const options: Intl.DateTimeFormatOptions = {
@@ -211,31 +222,41 @@ const Profile = ({
 
 	return (
 		<>
-			{/* Informations générales de l'utilisateur */}
 			{Object.keys(userData).length === 0 ? (
 				<div>Chargement...</div>
 			) : (
 				<section className="profil">
-					<div className="user-infos">
-						<div className="user-img">
-							<Image
-								src={avatar}
-								alt="Avatar profile"
-								priority
-								width={250}
-								height={250}
-							/>
-						</div>
-						<div className="user-details">
-							<div className="user-account">
-								<div className="user-username">
-									<h1>{userData.username}</h1>
+					<div className="profil-infos">
+						<div className="user-infos">
+							<div className="user-img">
+								<Image
+									src={avatar}
+									alt="Avatar profile"
+									priority
+									width={250}
+									height={250}
+								/>
+							</div>
+							<div className="user-details">
+								<div className="user-account">
+									<div className="user-username">
+										<h1>{userData.username}</h1>
+									</div>
+
+									<span>
+										Compte créé le{' '}
+										{formatDateToFrench(userData.createdAt)}
+									</span>
 								</div>
 
-								<span>
-									Compte créé le{' '}
-									{formatDateToFrench(userData.createdAt)}
-								</span>
+								<ul>
+									<li>
+										<FaEnvelope />
+										<span className="user-email">
+											{userData.email}
+										</span>
+									</li>
+								</ul>
 							</div>
 
 							<ul>
@@ -325,14 +346,30 @@ const Profile = ({
 								</span>
 							</div>
 						</div>
+						<div className="underline profile"></div>
+						<div className="user-pokedex">
+							<div className="pokedex-title">
+								<h1>Pokédex</h1>
+								<div className="progress-bar">
+									<div
+										className="progress"
+										style={{ width: `${pokedexCompletion}%` }}
+									></div>
+									<span className="completion-text">
+										{userData.pokedex.length} Pokémon sur{' '}
+										{totalPokemon} ({pokedexCompletion} %)
+									</span>
+								</div>
+							</div>
 
-						<div className="pokedex-cards">
-							{pokemonData.map(pokemon => (
-								<PokedexCard
-									pokemon={pokemon}
-									key={pokemon.id}
-								></PokedexCard>
-							))}
+							<div className="pokedex-cards">
+								{pokemonData.map(pokemon => (
+									<PokedexCard
+										pokemon={pokemon}
+										key={pokemon.id}
+									></PokedexCard>
+								))}
+							</div>
 						</div>
 					</div>
 				</section>
