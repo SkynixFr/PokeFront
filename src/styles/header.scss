@@ -1,0 +1,141 @@
+.header {
+	width: 100px;
+	height: 50vh;
+	position: fixed;
+	top: 50%;
+	left: 0;
+	transform: translateY(-50%);
+	background: rgba(255, 255, 255, 1);
+	border-top-right-radius: 15px;
+	border-bottom-right-radius: 15px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	backdrop-filter: blur(10px);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	z-index: 10;
+
+	.header-logo {
+		width: 100%;
+		height: max-content;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-grow: 1;
+
+		img {
+			width: 50px;
+			height: 50px;
+		}
+	}
+
+	.header-links {
+		width: 100%;
+		height: max-content;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		flex-grow: 2;
+
+		.header-link {
+			width: 100%;
+			height: max-content;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+			position: relative;
+
+			&.trainer {
+				img {
+					width: 60px;
+					height: 80px;
+				}
+			}
+
+			&.pokedex {
+				img {
+					width: 60px;
+					height: 60px;
+				}
+			}
+
+			.tooltip {
+				position: absolute;
+				top: 50%;
+				left: 100%;
+				transform: translate(10px, -50%);
+				background-color: rgba(0, 0, 0, 0.8);
+				color: #fff;
+				padding: 6px 12px;
+				border-radius: 4px;
+				white-space: nowrap;
+				visibility: hidden;
+				opacity: 0;
+				transition:
+					visibility 0s,
+					opacity 0.3s ease;
+			}
+
+			&:hover {
+				.tooltip {
+					visibility: visible;
+					opacity: 1;
+					animation: tooltipAnimation 0.3s linear;
+				}
+			}
+		}
+	}
+
+	.header-logout {
+		width: 100%;
+		height: max-content;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-grow: 1;
+		position: relative;
+
+		svg {
+			width: 30px;
+			height: 30px;
+		}
+
+		.tooltip {
+			position: absolute;
+			top: 50%;
+			left: 100%;
+			transform: translate(10px, -50%);
+			background-color: rgba(0, 0, 0, 0.8);
+			color: #fff;
+			padding: 6px 12px;
+			border-radius: 4px;
+			white-space: nowrap;
+			visibility: hidden;
+			opacity: 0;
+			transition:
+				visibility 0s,
+				opacity 0.3s ease;
+		}
+
+		&:hover {
+			.tooltip {
+				visibility: visible;
+				opacity: 1;
+				animation: tooltipAnimation 0.3s linear;
+			}
+		}
+	}
+}
+
+@keyframes tooltipAnimation {
+	0%,
+	100% {
+		transform: translateX(10px) translateY(-50%);
+	}
+	50% {
+		transform: translateX(-10px) translateY(-50%);
+	}
+}
