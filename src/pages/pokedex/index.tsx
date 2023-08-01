@@ -149,7 +149,7 @@ export default function Pokemon({ data }: { data: PokemonResponse }) {
 		// 		SI IL Y A PAS D ERREUR : RENVOYER LE RESULTAT A L UTILISATEUR
 		// 		SINON REQUETE PAR TYPE
 
-		// RECHERCHE PAR NOM
+		// RECHERCHE PAR NOM OU ID
 		// try {
 		// 	const response = await axios.get(
 		// 		`https://pokeapi.co/api/v2/pokemon/${formData.searchPokemon}`
