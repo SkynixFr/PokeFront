@@ -4,12 +4,15 @@ import { faker } from '@faker-js/faker';
 import { FaEnvelope, FaPencil, FaTrashCan } from 'react-icons/fa6';
 import Image from 'next/image';
 import PokedexCard from '../../../components/pokedexCard';
+import profileTitle from '../../../public/images/profil-title.png';
+import blancoton from '../../../public/images/blancoton.png';
+import blancotonShiny from '../../../public/images/blancoton-shiny.png';
 
 export async function getServerSideProps() {
 	const avatar = faker.image.avatarGitHub();
 
 	const jwtToken =
-		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUxZSIsInVzZXJuYW1lIjoiTHVmZnlzb25pYyIsImVtYWlsIjoicmlja3lAZ21haWwuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkVG9IZUQ4ZUtvMUJ3NFBnaEIyMGExLjR3amJZUFNmZWlsS3NTaFdjRi9hUFQ5d3RFa3FaalciLCJwb2tlZGV4IjpbInBpa2FjaHUiLCJyaW9sdSIsImx1Y2FyaW8iLCJ2aWN0aW5pIiwibWV3IiwiZWV2ZWUiXSwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yOFQwNzowNToxMy45NTdaIiwidXBkYXRlQXQiOiIyMDIzLTA4LTAxVDA5OjQyOjA2LjU2OVoiLCJpYXQiOjE2OTA4ODkxOTMsImV4cCI6MTY5MDg4OTc5M30.E9y_7_B8PS8fzeW5mh8cegQfK00d35jgnYIdaew__WE';
+		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUxZSIsInVzZXJuYW1lIjoiTHVmZnlzb25pYyIsImVtYWlsIjoicmlja3lAZ21haWwuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkVG9IZUQ4ZUtvMUJ3NFBnaEIyMGExLjR3amJZUFNmZWlsS3NTaFdjRi9hUFQ5d3RFa3FaalciLCJwb2tlZGV4IjpbInBpa2FjaHUiLCJyaW9sdSIsImx1Y2FyaW8iLCJ2aWN0aW5pIiwibWV3IiwiZWV2ZWUiXSwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yOFQwNzowNToxMy45NTdaIiwidXBkYXRlQXQiOiIyMDIzLTA4LTAxVDA5OjQyOjA2LjU2OVoiLCJpYXQiOjE2OTA4OTQxMjMsImV4cCI6MTY5MDg5NDcyM30.fN79luL1tEJkhCjrCYEULsuZ-p9sJtml0GzXGzshotI';
 
 	const config = {
 		headers: {
@@ -135,7 +138,6 @@ const Profile = ({
 			? ((userData.pokedex.length / totalPokemon) * 100).toFixed(2)
 			: 0;
 
-	console.log(userData);
 	function formatDateToFrench(dateString: string): string {
 		const date = new Date(dateString);
 		const options: Intl.DateTimeFormatOptions = {
@@ -155,47 +157,84 @@ const Profile = ({
 				<div>Chargement...</div>
 			) : (
 				<section className="profil">
+					<div className="blancoton">
+						<Image src={blancoton} alt="blancoton logo" priority></Image>
+					</div>
+					<div className="blancoton">
+						<Image src={blancoton} alt="blancoton logo" priority></Image>
+					</div>
+					<div className="blancoton">
+						<Image
+							src={blancotonShiny}
+							alt="blancotonShiny logo"
+							priority
+						></Image>
+					</div>
+					<div className="blancoton">
+						<Image src={blancoton} alt="blancoton logo" priority></Image>
+					</div>
+					<div className="blancoton">
+						<Image src={blancoton} alt="blancoton logo" priority></Image>
+					</div>
+					<div className="blancoton">
+						<Image
+							src={blancotonShiny}
+							alt="blancotonShiny logo"
+							priority
+						></Image>
+					</div>
+					<div className="blancoton">
+						<Image src={blancoton} alt="blancoton logo" priority></Image>
+					</div>
+					<div className="blancoton">
+						<Image src={blancoton} alt="blancoton logo" priority></Image>
+					</div>
+					<div className="profil-title">
+						<Image src={profileTitle} alt="Profil title" priority></Image>
+					</div>
 					<div className="profil-infos">
-						<div className="user-infos">
-							<div className="user-img">
-								<Image
-									src={avatar}
-									alt="Avatar profile"
-									priority
-									width={250}
-									height={250}
-								/>
-							</div>
-							<div className="user-details">
-								<div className="user-account">
-									<div className="user-username">
-										<h1>{userData.username}</h1>
+						<div className="user-infos-container">
+							<div className="user-infos">
+								<div className="user-img">
+									<Image
+										src={avatar}
+										alt="Avatar profile"
+										priority
+										width={250}
+										height={250}
+									/>
+								</div>
+								<div className="user-details">
+									<div className="user-account">
+										<div className="user-username">
+											<h1>{userData.username}</h1>
+										</div>
+
+										<span>
+											Compte créé le{' '}
+											{formatDateToFrench(userData.createdAt)}
+										</span>
 									</div>
 
-									<span>
-										Compte créé le{' '}
-										{formatDateToFrench(userData.createdAt)}
-									</span>
+									<ul>
+										<li>
+											<FaEnvelope />
+											<span className="user-email">
+												{userData.email}
+											</span>
+										</li>
+									</ul>
 								</div>
-
-								<ul>
-									<li>
-										<FaEnvelope />
-										<span className="user-email">
-											{userData.email}
-										</span>
-									</li>
-								</ul>
-							</div>
-							<div className="user-edition">
-								<button type="submit" className="user-update">
-									<FaPencil />
-									<span>Modifier </span>
-								</button>
-								<button type="submit" className="user-delete">
-									<FaTrashCan />
-									<span>Supprimer </span>
-								</button>
+								<div className="user-edition">
+									<button type="submit" className="user-update">
+										<FaPencil />
+										<span>Modifier </span>
+									</button>
+									<button type="submit" className="user-delete">
+										<FaTrashCan />
+										<span>Supprimer </span>
+									</button>
+								</div>
 							</div>
 						</div>
 						<div className="underline profile"></div>
