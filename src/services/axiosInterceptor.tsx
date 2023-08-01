@@ -4,6 +4,7 @@ import axiosInstance from './axiosInstance';
 import Cookies from 'js-cookie';
 import { GetServerSidePropsContext } from 'next';
 import { serialize } from 'cookie'; // Import the serialize function from 'cookie'
+import { useRouter } from 'next/router';
 
 let globalContext: GetServerSidePropsContext;
 
@@ -83,6 +84,19 @@ axiosInstance.interceptors.response.use(
 				// If the refresh token request fails, log the user out or handle the error as needed
 				console.log('Failed to refresh access token:', error);
 				// For example, you might redirect the user to the login page or show an error message
+
+				// Check if it's a server-side request or client-side request
+				if (globalContext) {
+					// If it's a server-side request, use the response object to redirect
+					globalContext.res.writeHead(302, {
+						Location: '/login' // Redirect to the login page
+					});
+					globalContext.res.end();
+				} else {
+					// If it's a client-side request, use the router to redirect
+					const router = useRouter();
+					router.replace('/login');
+				}
 			}
 		}
 		return Promise.reject(error);
