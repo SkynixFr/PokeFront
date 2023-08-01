@@ -5,23 +5,22 @@ import { FaEnvelope, FaPencil, FaTrashCan } from 'react-icons/fa6';
 import Image from 'next/image';
 import PokedexCard from '../../../components/pokedexCard';
 
-const jwtToken =
-	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUyMCIsInVzZXJuYW1lIjoiTmV3dCIsImVtYWlsIjoibmV3dEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCRNYnl3UEZiWEZMLlowWk12SUZ0bGdPcU9vaVlZUVZicDF4aDBFdEh0cW5hTy8vaXp1T0EvTyIsInBva2VkZXgiOlsicGlrYWNodSIsInJpb2x1IiwiZWV2ZWUiXSwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yOFQwNzowNToxNC40MDRaIiwidXBkYXRlQXQiOiIyMDIzLTA4LTAxVDEzOjQwOjI1LjM0NFoiLCJpYXQiOjE2OTA4OTgwODUsImV4cCI6MTY5MDg5ODY4NX0.f2zBqsuSeylsp5uaDc62JcsYXCgAXUrbZiPUEf3biVQ';
-
-const headers = {
-	Authorization: `Bearer ${jwtToken}`,
-	'Content-Type': 'application/json'
-};
-
 export async function getServerSideProps() {
 	const avatar = faker.image.avatarGitHub();
+
+	const jwtToken =
+		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUyMCIsInVzZXJuYW1lIjoiTmV3dCIsImVtYWlsIjoibmV3dEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCRNYnl3UEZiWEZMLlowWk12SUZ0bGdPcU9vaVlZUVZicDF4aDBFdEh0cW5hTy8vaXp1T0EvTyIsInBva2VkZXgiOlsicGlrYWNodSIsInJpb2x1IiwiZWV2ZWUiXSwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yOFQwNzowNToxNC40MDRaIiwidXBkYXRlQXQiOiIyMDIzLTA4LTAxVDEzOjQwOjI1LjM0NFoiLCJpYXQiOjE2OTA4OTk1NTYsImV4cCI6MTY5MDkwMDE1Nn0.fiAYrOhZeG09hWJO7SwJbKlm-wB0PvG57WP2Thua9lo';
+
+	const config = {
+		headers: {
+			Authorization: `Bearer ${jwtToken}`
+		}
+	};
 
 	try {
 		const responseUser = await axios.get(
 			'http://localhost:8080/api/v2/users/me',
-			{
-				headers: headers
-			}
+			config
 		);
 
 		const responsePokemon = await axios.get(
@@ -131,10 +130,6 @@ const Profile = ({
 	pokemonData: PokemonData[];
 }) => {
 	const [userData, setUserData] = useState(user);
-	const [showPopup, setShowPopup] = useState(false);
-	const [showResultMessage, setShowResultMessage] = useState(false);
-	const [resultMessage, setResultMessage] = useState('');
-	const [colorResultMessage, setColorResultMessage] = useState('');
 	const pokedexCompletion =
 		userData.pokedex && totalPokemon > 0
 			? ((userData.pokedex.length / totalPokemon) * 100).toFixed(2)
@@ -153,72 +148,6 @@ const Profile = ({
 
 		return date.toLocaleDateString('fr-FR', options);
 	}
-
-	function sleep(ms: number): Promise<void> {
-		return new Promise(resolve => setTimeout(resolve, ms));
-	}
-
-	const handleEditClick = () => {
-		setShowPopup(true);
-	};
-
-	const handlePopupClose = () => {
-		setShowPopup(false);
-	};
-
-	const handleSubmit = async (event: React.FormEvent) => {
-		event.preventDefault();
-
-		// Soumettre les informations modifiées ici (username, email, password)
-		console.log('Username:', user.username);
-		console.log('Email:', user.email);
-		console.log('Password:', user.password);
-
-		// Appel PokePI pour modification de l'utilisateur
-		try {
-			const username = document.getElementById('username').value;
-			console.log('username = ', username);
-
-			const body = {
-				// Les données que vous souhaitez envoyer dans le corps de la requête
-				// Par exemple, si vous voulez envoyer un objet avec des propriétés username, email et password :
-				username: username
-				// email: 'nouveauEmail@example.com',
-				// password: 'nouveauMotDePasse'
-			};
-
-			console.log('datas : ', headers, body);
-
-			const responseUpdateUser = await axios.put(
-				`http://localhost:8080/api/v2/users/${user.id}`,
-				{
-					headers: headers,
-					data: body
-				}
-			);
-
-			console.log(responseUpdateUser);
-
-			setColorResultMessage(`green`);
-			setResultMessage(`Modification effectuée avec succès !`);
-
-			// return true;
-		} catch (error) {
-			console.error(`Error while updating user ${user.username}`);
-			setColorResultMessage(`red`);
-			setResultMessage(`Erreur lors de la modification de vos informations`);
-		} finally {
-			console.log('Je suis dans le finally');
-			console.log(resultMessage);
-			setShowResultMessage(true);
-
-			await sleep(5000);
-
-			// Fermer la pop-up après la soumission
-			// setShowPopup(false);
-			setShowResultMessage(false);
-		}
-	};
 
 	return (
 		<>
@@ -258,92 +187,15 @@ const Profile = ({
 									</li>
 								</ul>
 							</div>
-
-							<ul>
-								<li>
-									<FaEnvelope />
-									<span className="user-email">{userData.email}</span>
-								</li>
-							</ul>
-						</div>
-						<div className="user-edition">
-							<button
-								type="submit"
-								className="user-update"
-								onClick={handleEditClick}
-							>
-								<FaPencil />
-								<span>Modifier </span>
-							</button>
-							<button type="submit" className="user-delete">
-								<FaTrashCan />
-								<span>Supprimer </span>
-							</button>
-						</div>
-						{showPopup && (
-							<div className="popup">
-								<div className="popup-content">
-									{/* Formulaire de modification des informations de l'utilisateur */}
-									<h2>Modifier vos informations</h2>
-									<form onSubmit={handleSubmit}>
-										<div className="form-group">
-											<label htmlFor="username">Pseudo : </label>
-											<input
-												type="text"
-												id="username"
-												//value={user.username}
-												onChange={() => {}}
-												// onChange={e =>
-												// 	(user.username = e.target.value)
-												// }
-											/>
-										</div>
-
-										<div className="form-group">
-											<label htmlFor="email">Email : </label>
-											<input
-												type="email"
-												id="email"
-												value={user.email}
-												onChange={() => {}}
-												// onChange={e =>
-												// 	(user.email = e.target.value)
-												// }
-											/>
-										</div>
-
-										{showResultMessage && (
-											<div
-												className="field-result"
-												style={{ color: colorResultMessage }}
-											>
-												{resultMessage}
-											</div>
-										)}
-
-										<button type="submit">Soumettre</button>
-										<button type="button" onClick={handlePopupClose}>
-											Annuler
-										</button>
-									</form>
-								</div>
-							</div>
-						)}
-					</div>
-
-					<div className="underline profile"></div>
-					<div className="user-pokedex">
-						<div className="pokedex-title">
-							<h1>Pokédex</h1>
-							<div className="progress-bar">
-								<div
-									className="progress"
-									style={{ width: `${pokedexCompletion}%` }}
-								></div>
-								<span className="completion-text">
-									{userData.pokedex.length} Pokémon sur {totalPokemon}{' '}
-									({pokedexCompletion} %)
-								</span>
+							<div className="user-edition">
+								<button type="submit" className="user-update">
+									<FaPencil />
+									<span>Modifier </span>
+								</button>
+								<button type="submit" className="user-delete">
+									<FaTrashCan />
+									<span>Supprimer </span>
+								</button>
 							</div>
 						</div>
 						<div className="underline profile"></div>
