@@ -141,6 +141,14 @@ export default function Pokemon({ data }: { data: PokemonResponse }) {
 		event.preventDefault();
 		console.log(formData);
 
+		// IL FAUT GERER :
+		// LE NOM D UN EST RECHERCHE PAR DU TEXTE OU UN NOMBRE
+		// LE TYPE EST RECHERCHE PAR DU TEXTE
+
+		// TESTER QUE EN PREMIER LA REQUETE AVEC LE NOM
+		// 		SI IL Y A PAS D ERREUR : RENVOYER LE RESULTAT A L UTILISATEUR
+		// 		SINON REQUETE PAR TYPE
+
 		// RECHERCHE PAR NOM
 		// try {
 		// 	const response = await axios.get(
@@ -161,7 +169,7 @@ export default function Pokemon({ data }: { data: PokemonResponse }) {
 		// 	console.log(pokemons);
 		// } catch (error) {
 		// 	console.error(
-		// 		"Erreur lors de la recherche d'un nom de pokémon dans PokeAPI",
+		// 		"Erreur lors de la recherche par NOM de pokémon dans PokeAPI",
 		// 		error
 		// 	);
 		// }
@@ -196,7 +204,7 @@ export default function Pokemon({ data }: { data: PokemonResponse }) {
 			console.log(pokemons);
 		} catch (error) {
 			console.error(
-				'Erreur lors de la recherche par type de pokémons dans PokeAPI',
+				'Erreur lors de la recherche par TYPE de pokémons dans PokeAPI',
 				error
 			);
 		}
