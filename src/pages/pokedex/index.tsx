@@ -58,6 +58,7 @@ interface PokemonResponse {
 export default function Pokemon({ data }: { data: PokemonResponse }) {
 	const [pokemons, setPokemon] = useState(data.results);
 	const [req, setReq] = useState(data);
+	const [formData, setFormData] = useState<{ [key: string]: string }>({});
 
 	const fetchDataFromAPInext = async () => {
 		try {
@@ -134,10 +135,32 @@ export default function Pokemon({ data }: { data: PokemonResponse }) {
 			);
 		}
 	};
+
+	// récupérer la donnée dans le recherche
+	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault();
+		console.log(formData);
+	}
+
+	// Au changement de la barre de recherche
+	function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+		const { name, value } = event.target;
+		setFormData({ ...formData, [name]: value });
+	}
+
+	// fonction qui permet de
+
 	return (
 		<section className="{pokemon-list-container}">
-			<Search /><button onClick={Search}>Valider</button>
-			
+			<form className="form-fields" onSubmit={handleSubmit}>
+				<input
+					type="search"
+					name="searchPokemon"
+					id="searchPokemon"
+					onChange={handleChange}
+				/>
+				<button onClick={Search}>Valider</button>
+			</form>
 
 			<button onClick={fetchDataFromAPIprev}>Précédent</button>
 			<button onClick={fetchDataFromAPInext}>Suivant</button>
@@ -147,18 +170,14 @@ export default function Pokemon({ data }: { data: PokemonResponse }) {
 				) : (
 					pokemons.map(pokemon => (
 						<>
-							<p className='pokemon-name'> # {pokemon.id} </p>
-							<p className='pokemon-name'> {pokemon.name} </p>
-							<img src={pokemon.image} alt={pokemon.name}/>
-							<p className='pokemon-name'> Type : {pokemon.type} </p>
+							<p className="pokemon-name"> # {pokemon.id} </p>
+							<p className="pokemon-name"> {pokemon.name} </p>
+							<img src={pokemon.image} alt={pokemon.name} />
+							<p className="pokemon-name"> Type : {pokemon.type} </p>
 						</>
-
 					))
 				)}
 			</ul>
 		</section>
 	);
 }
-
-
-
