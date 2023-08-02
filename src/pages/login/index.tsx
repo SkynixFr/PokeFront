@@ -70,7 +70,11 @@ const Login = () => {
 				<div className="form-title">
 					<h1>Connexion</h1>
 				</div>
-				<Form fields={fields} labelButton={'Connexion'} where={'/'}></Form>
+				<Form
+					fields={fields}
+					labelButton={'Connexion'}
+					where={'/user/me'}
+				></Form>
 				<div className="form-links">
 					<span>Pas encore de compte ?</span>
 					<Link href="/register">Créer un compte</Link>
