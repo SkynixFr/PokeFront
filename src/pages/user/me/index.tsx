@@ -431,10 +431,18 @@ const Profile = ({
 									<div className="popup">
 										<div className="popup-content">
 											{/* Formulaire de modification des informations de l'utilisateur */}
-											<h1>Modifier vos informations</h1>
-											<form onSubmit={handleSubmit}>
+											<h1 className="form-title">
+												Modifier vos informations
+											</h1>
+											<form
+												onSubmit={handleSubmit}
+												className="form-fields"
+											>
 												<div className="form-group">
-													<label htmlFor="username">
+													<label
+														htmlFor="username"
+														className="form-label"
+													>
 														Pseudo :{' '}
 													</label>
 													<input
@@ -477,10 +485,16 @@ const Profile = ({
 													</div>
 												)}
 
-												<button type="submit">Modifier</button>
+												<button
+													type="submit"
+													className="submit-button"
+												>
+													Modifier
+												</button>
 												<button
 													type="button"
 													onClick={handlePopupClose}
+													className="cancel-button"
 												>
 													Annuler
 												</button>
@@ -493,7 +507,7 @@ const Profile = ({
 									<div className="popup">
 										<div className="popup-content">
 											{/* Pop up validation suppression de compte */}
-											<h1>
+											<h1 className="form-title">
 												Êtes-vous sûr de vouloir supprimer votre
 												compte ?
 											</h1>
@@ -507,12 +521,16 @@ const Profile = ({
 													</div>
 												)}
 
-												<button type="submit">
+												<button
+													type="submit"
+													className="submit-button"
+												>
 													Confirmer la suppression
 												</button>
 												<button
 													type="button"
 													onClick={handleDeletePopupClose}
+													className="cancel-button"
 												>
 													Annuler
 												</button>

@@ -240,23 +240,110 @@
 
 				.popup {
 					/* Styles pour la pop-up (en position fixe pour l'afficher au centre de l'écran) */
+					// position: fixed;
+					// width: 100%;
+					// height: 100%;
+					// background-color: rgba(0, 0, 0, 0.5);
+					// display: flex;
+					// justify-content: center;
+					// align-items: center;
+					// z-index: 2;
+
+					//width: clamp(350px, 35%, 500px);
+					height: auto;
+					display: flex;
+					align-items: center;
+					flex-flow: column;
+					background: rgba(255, 255, 255, 1);
+					border-radius: 10px;
+					box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+					border: none;
+					padding: 8px;
+
 					position: fixed;
 					top: 0;
 					left: 0;
 					width: 100%;
 					height: 100%;
-					background-color: rgba(0, 0, 0, 0.5);
-					display: flex;
 					justify-content: center;
-					align-items: center;
+					background-color: rgba(0, 0, 0, 0.5);
 					z-index: 2;
 
+					.form-title {
+						font-size: clamp(1.8em, 5vw, 2em);
+						margin: 0 0 15px 0;
+						flex-grow: 1;
+					}
+
 					.popup-content {
-						/* Styles pour le contenu de la pop-up */
 						background-color: #fff;
 						padding: 20px;
 						border-radius: 8px;
 						box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+						display: flex;
+						flex-direction: column;
+						align-items: center;
+
+						.form-group {
+							width: 100%;
+							max-width: 400px;
+							margin-bottom: 20px;
+							display: block;
+
+							.form-label {
+								width: max-content;
+								// position: absolute;
+								// top: -8px;
+								// left: 10px;
+								background-color: #fff;
+								font-size: clamp(0.8em, 2vw, 0.9em);
+								// padding: 0 10px 0 10px;
+							}
+
+							input {
+								width: 100%;
+								padding: 10px;
+								font-size: 16px;
+								border: 1px solid #ccc;
+								border-radius: 4px;
+								font-family: 'Clash Display', sans-serif;
+								border-color: #ccc;
+							}
+						}
+
+						button[type='submit'] {
+							width: 100%;
+							height: 45px;
+							border: 1px solid #386abb;
+							border-radius: 5px;
+							background-color: #386abb;
+							color: #fff;
+							cursor: pointer;
+							font-family: 'Clash Display', sans-serif;
+							font-size: clamp(1em, 2vw, 1.2em);
+						}
+
+						.submit-button:hover {
+							background-color: #4e81c3; /* Nouvelle couleur de fond au survol */
+						}
+
+						.cancel-button {
+							width: 100%;
+							height: 35px;
+							border: 1px solid #9e0b0b;
+							margin-top: 20px;
+							border-radius: 5px;
+							background-color: #9e0b0b;
+							color: #fff;
+							cursor: pointer;
+							font-family: 'Clash Display', sans-serif;
+							font-size: clamp(1em, 2vw, 1.2em);
+						}
+
+						.cancel-button:hover {
+							background-color: #d92727; /* Nouvelle couleur de fond au survol */
+						}
 					}
 				}
 			}
