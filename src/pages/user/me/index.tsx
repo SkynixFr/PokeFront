@@ -7,7 +7,9 @@ import PokedexCard from '../../../components/pokedexCard';
 import profileTitle from '../../../public/images/profil-title.png';
 import blancoton from '../../../public/images/blancoton.png';
 import blancotonShiny from '../../../public/images/blancoton-shiny.png';
-
+import { GetServerSidePropsContext } from 'next';
+import { setGlobalContext } from '../../../services/axiosInterceptor';
+import axiosInstance from '../../../services/axiosInterceptor';
 const jwtToken =
 	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUyMCIsInVzZXJuYW1lIjoiTmV3dCIsImVtYWlsIjoic2FyYW55dUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCRNYnl3UEZiWEZMLlowWk12SUZ0bGdPcU9vaVlZUVZicDF4aDBFdEh0cW5hTy8vaXp1T0EvTyIsInBva2VkZXgiOlsicGlrYWNodSIsInJpb2x1IiwiZWV2ZWUiXSwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yOFQwNzowNToxNC40MDRaIiwidXBkYXRlQXQiOiIyMDIzLTA4LTAxVDE2OjM5OjAzLjg5M1oiLCJpYXQiOjE2OTA5MDk0OTIsImV4cCI6MTY5MDkxMDA5Mn0.cfW4z1S7pYOShgcdKOmZFGDR4yxuVBIvhQgIZi5GPJI';
 
@@ -16,14 +18,18 @@ const headers = {
 	'Content-Type': 'application/json'
 };
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
 	const avatar = faker.image.avatarGitHub();
 
 	try {
-		const responseUser = await axios.get(
-			'http://localhost:8080/api/v2/users/me',
-			{ headers: headers }
-		);
+		setGlobalContext(context);
+
+		const responseUser = await axiosInstance.get('/users/me'); // Use the axiosInstance with the config
+
+		// const responseUser = await axios.get(
+		// 	'http://localhost:8080/api/v2/users/me',
+		// 	{ headers: headers }
+		// );
 
 		const responsePokemon = await axios.get(
 			'https://pokeapi.co/api/v2/pokedex/national'
