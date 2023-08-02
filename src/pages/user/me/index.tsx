@@ -11,10 +11,15 @@ import blancotonShiny from '../../../public/images/blancoton-shiny.png';
 import { GetServerSidePropsContext } from 'next';
 import { setGlobalContext } from '../../../services/axiosInterceptor';
 import axiosInstance from '../../../services/axiosInterceptor';
+<<<<<<< HEAD
 import Cookies from 'js-cookie';
 import axiosInstancePublic from '../../../services/axiosInstancePublic';
 
 const accessToken = Cookies.get('acessToken');
+=======
+const jwtToken =
+	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUyMCIsInVzZXJuYW1lIjoiTmV3dCIsImVtYWlsIjoibmV3dEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCRNYnl3UEZiWEZMLlowWk12SUZ0bGdPcU9vaVlZUVZicDF4aDBFdEh0cW5hTy8vaXp1T0EvTyIsInBva2VkZXgiOlsicGlrYWNodSIsInJpb2x1IiwiZWV2ZWUiXSwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yOFQwNzowNToxNC40MDRaIiwidXBkYXRlQXQiOiIyMDIzLTA4LTAyVDEzOjE0OjQ5LjMyMFoiLCJpYXQiOjE2OTA5ODIwOTksImV4cCI6MTY5MDk4MjY5OX0.KHZFmIUQj9ioLevzs8FtmgGZlG629hNWZ2VvWsAEOLA';
+>>>>>>> 3d458bb815ab4c76442774aac24e6cbfb9053be2
 
 const headers = {
 	Authorization: `Bearer ${accessToken}`,
@@ -152,11 +157,14 @@ const Profile = ({
 	const [username, setUsername] = useState('');
 	const [email, setEmail] = useState('');
 	const [colorResultMessage, setColorResultMessage] = useState('');
+<<<<<<< HEAD
 	const [password, setPassword] = useState('');
 	const [formData, setFormData] = useState<{ [key: string]: string }>({});
 	const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>(
 		{}
 	);
+=======
+>>>>>>> 3d458bb815ab4c76442774aac24e6cbfb9053be2
 
 	const pokedexCompletion =
 		userData.pokedex && totalPokemon > 0
@@ -388,9 +396,6 @@ const Profile = ({
 														id="username"
 														placeholder="Nouveau pseudo"
 														onChange={handleChange}
-														// onChange={e =>
-														// 	(user.username = e.target.value)
-														// }
 													/>
 												</div>
 
@@ -401,9 +406,6 @@ const Profile = ({
 														id="email"
 														placeholder="Nouvel email"
 														onChange={handleChange}
-														// onChange={e =>
-														// 	(user.email = e.target.value)
-														// }
 													/>
 												</div>
 												<div className="form-group">
