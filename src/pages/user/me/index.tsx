@@ -11,7 +11,7 @@ import { GetServerSidePropsContext } from 'next';
 import { setGlobalContext } from '../../../services/axiosInterceptor';
 import axiosInstance from '../../../services/axiosInterceptor';
 const jwtToken =
-	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUyMCIsInVzZXJuYW1lIjoiTmV3dCIsImVtYWlsIjoic2FyYW55dUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCRNYnl3UEZiWEZMLlowWk12SUZ0bGdPcU9vaVlZUVZicDF4aDBFdEh0cW5hTy8vaXp1T0EvTyIsInBva2VkZXgiOlsicGlrYWNodSIsInJpb2x1IiwiZWV2ZWUiXSwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yOFQwNzowNToxNC40MDRaIiwidXBkYXRlQXQiOiIyMDIzLTA4LTAxVDE2OjM5OjAzLjg5M1oiLCJpYXQiOjE2OTA5MDk0OTIsImV4cCI6MTY5MDkxMDA5Mn0.cfW4z1S7pYOShgcdKOmZFGDR4yxuVBIvhQgIZi5GPJI';
+	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUyMCIsInVzZXJuYW1lIjoiTmV3dCIsImVtYWlsIjoibmV3dEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCRNYnl3UEZiWEZMLlowWk12SUZ0bGdPcU9vaVlZUVZicDF4aDBFdEh0cW5hTy8vaXp1T0EvTyIsInBva2VkZXgiOlsicGlrYWNodSIsInJpb2x1IiwiZWV2ZWUiXSwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yOFQwNzowNToxNC40MDRaIiwidXBkYXRlQXQiOiIyMDIzLTA4LTAyVDEyOjQwOjIzLjgyNloiLCJpYXQiOjE2OTA5ODAwNjAsImV4cCI6MTY5MDk4MDY2MH0.SUivJCdnE5q5lOmCXTiWILly7ytDJxkjZl7eCFhGL8M';
 
 const headers = {
 	Authorization: `Bearer ${jwtToken}`,
@@ -146,7 +146,14 @@ const Profile = ({
 	const [showPopup, setShowPopup] = useState(false);
 	const [showResultMessage, setShowResultMessage] = useState(false);
 	const [resultMessage, setResultMessage] = useState('');
+	const [username, setUsername] = useState('');
+	const [email, setEmail] = useState('');
 	const [colorResultMessage, setColorResultMessage] = useState('');
+	const [formData, setFormData] = useState<{ [key: string]: string }>({});
+	const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>(
+		{}
+	);
+
 	const pokedexCompletion =
 		userData.pokedex && totalPokemon > 0
 			? ((userData.pokedex.length / totalPokemon) * 100).toFixed(2)
@@ -170,6 +177,18 @@ const Profile = ({
 		return emailPattern.test(email);
 	}
 
+	function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+		const inputId = event.target.id;
+
+		console.log('name : ', event.target.id);
+
+		if (inputId === 'username') {
+			setUsername(event.target.value);
+		} else if (inputId === 'email') {
+			setEmail(event.target.value);
+		}
+	}
+
 	function sleep(ms: number): Promise<void> {
 		return new Promise(resolve => setTimeout(resolve, ms));
 	}
@@ -186,17 +205,12 @@ const Profile = ({
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
 
-		// Soumettre les informations modifiées ici (username, email, password)
-		// console.log('Username:', user.username);
-		// console.log('Email:', user.email);
-		// console.log('Password:', user.password);
-
 		// Appel PokePI pour modification de l'utilisateur
 		try {
-			const username = document.getElementById('username').value;
-			const email = document.getElementById('email').value;
-
 			const body: UpdateBody = { username: '', email: '' };
+
+			console.log('username : ', username);
+			console.log('email : ', email);
 
 			if (username.trim() === '') {
 				delete body.username;
@@ -343,7 +357,7 @@ const Profile = ({
 														type="text"
 														id="username"
 														placeholder="Nouveau pseudo"
-														onChange={() => {}}
+														onChange={handleChange}
 														// onChange={e =>
 														// 	(user.username = e.target.value)
 														// }
@@ -356,7 +370,7 @@ const Profile = ({
 														type="email"
 														id="email"
 														placeholder="Nouvel email"
-														onChange={() => {}}
+														onChange={handleChange}
 														// onChange={e =>
 														// 	(user.email = e.target.value)
 														// }
