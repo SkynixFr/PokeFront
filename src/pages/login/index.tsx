@@ -15,12 +15,8 @@ interface FormField {
 }
 
 const Login = () => {
-	if (
-		Cookies.get('refreshToken') == undefined &&
-		Cookies.get('accessToken') == undefined
-	) {
-		Cookies.remove('accessToken');
-	}
+	Cookies.remove('refreshToken');
+	Cookies.remove('accessToken');
 	const fields: FormField[] = [
 		{
 			type: 'text',
@@ -40,7 +36,7 @@ const Login = () => {
 			required: true
 		}
 	];
-	Cookies.remove('accessToken');
+
 	return (
 		<section className="login">
 			<div className="leaf">
@@ -74,7 +70,11 @@ const Login = () => {
 				<div className="form-title">
 					<h1>Connexion</h1>
 				</div>
-				<Form fields={fields} labelButton={'Connexion'} where={'/'}></Form>
+				<Form
+					fields={fields}
+					labelButton={'Connexion'}
+					where={'/user/me'}
+				></Form>
 				<div className="form-links">
 					<span>Pas encore de compte ?</span>
 					<Link href="/register">Créer un compte</Link>

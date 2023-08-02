@@ -20,7 +20,6 @@ axiosInstancePublic.interceptors.request.use(
 	config => {
 		// Modify the request configuration to include the access token
 		const accessToken = Cookies.get('accessToken');
-		console.log(accessToken);
 		if (accessToken) {
 			config.headers['Authorization'] = `Bearer ${accessToken}`;
 		}
