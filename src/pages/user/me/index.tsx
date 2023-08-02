@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import bcrypt from 'bcrypt';
 import { faker } from '@faker-js/faker';
 import { FaEnvelope, FaPencil, FaTrashCan } from 'react-icons/fa6';
 import Image from 'next/image';
@@ -10,11 +11,13 @@ import blancotonShiny from '../../../public/images/blancoton-shiny.png';
 import { GetServerSidePropsContext } from 'next';
 import { setGlobalContext } from '../../../services/axiosInterceptor';
 import axiosInstance from '../../../services/axiosInterceptor';
-const jwtToken =
-	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUyMCIsInVzZXJuYW1lIjoiTmV3dCIsImVtYWlsIjoibmV3dEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCRNYnl3UEZiWEZMLlowWk12SUZ0bGdPcU9vaVlZUVZicDF4aDBFdEh0cW5hTy8vaXp1T0EvTyIsInBva2VkZXgiOlsicGlrYWNodSIsInJpb2x1IiwiZWV2ZWUiXSwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yOFQwNzowNToxNC40MDRaIiwidXBkYXRlQXQiOiIyMDIzLTA4LTAyVDEyOjQwOjIzLjgyNloiLCJpYXQiOjE2OTA5ODAwNjAsImV4cCI6MTY5MDk4MDY2MH0.SUivJCdnE5q5lOmCXTiWILly7ytDJxkjZl7eCFhGL8M';
+import Cookies from 'js-cookie';
+import axiosInstancePublic from '../../../services/axiosInstancePublic';
+
+const accessToken = Cookies.get('acessToken');
 
 const headers = {
-	Authorization: `Bearer ${jwtToken}`,
+	Authorization: `Bearer ${accessToken}`,
 	'Content-Type': 'application/json'
 };
 
@@ -149,6 +152,7 @@ const Profile = ({
 	const [username, setUsername] = useState('');
 	const [email, setEmail] = useState('');
 	const [colorResultMessage, setColorResultMessage] = useState('');
+	const [password, setPassword] = useState('');
 	const [formData, setFormData] = useState<{ [key: string]: string }>({});
 	const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>(
 		{}
@@ -187,6 +191,9 @@ const Profile = ({
 		} else if (inputId === 'email') {
 			setEmail(event.target.value);
 		}
+		if (inputId === 'password') {
+			setPassword(event.target.value);
+		}
 	}
 
 	function sleep(ms: number): Promise<void> {
@@ -220,15 +227,28 @@ const Profile = ({
 				delete body.email;
 			} else body.email = email;
 
-			const responseUpdateUser = await axios.put(
-				`http://localhost:8080/api/v2/users/${user.id}`,
+			const hashedPassword = await bcrypt.hash(password, 10);
+			const isMatch = await bcrypt.compare(
+				hashedPassword,
+				userData.password
+			);
+			console.log(isMatch);
+			const responseUpdateUser = await axiosInstancePublic.put(
+				`users/${user.id}`,
 				body,
 				{
 					headers: headers
 				}
 			);
+			// const responseUpdateUser = await axios.put(
+			// 	`http://localhost:8080/api/v2/users/${user.id}`,
+			// 	body,
+			// 	{
+			// 		headers: headers
+			// 	}
+			// );
 
-			console.log(responseUpdateUser);
+			//console.log(responseUpdateUser);
 
 			setColorResultMessage(`green`);
 			setResultMessage(`Modification effectuée avec succès !`);
@@ -239,15 +259,25 @@ const Profile = ({
 			setShowPopup(false);
 			setShowResultMessage(false);
 
+			if (responseUpdateUser.status === 200) {
+				console.log("j'ai modifié le client");
+				console.log(userData.password);
+				console.log(password);
+				// const loginAgainClient = axiosInstancePublic.get('/login', {
+				// 	data: username,
+				// 	password: password
+				// });
+			}
+
 			// return true;
 		} catch (error) {
-			console.error(`Error while updating user ${user.username}`);
-			console.log('Erreur : ', error);
+			// console.error(`Error while updating user ${user.username}`);
+			// console.log('Erreur : ', error);
 			setColorResultMessage(`red`);
 			setResultMessage(`Erreur lors de la modification de vos informations`);
 		} finally {
-			console.log('Je suis dans le finally');
-			console.log(resultMessage);
+			// console.log('Je suis dans le finally');
+			// console.log(resultMessage);
 			setShowResultMessage(true);
 
 			await sleep(5000);
@@ -376,7 +406,20 @@ const Profile = ({
 														// }
 													/>
 												</div>
-
+												<div className="form-group">
+													<label htmlFor="mot de passe">
+														Mot de passe :{' '}
+													</label>
+													<input
+														type="password"
+														id="password"
+														placeholder="nouveau mot de passe"
+														onChange={handleChange}
+														// onChange={e =>
+														// 	(user.email = e.target.value)
+														// }
+													/>
+												</div>
 												{showResultMessage && (
 													<div
 														className="field-result"
