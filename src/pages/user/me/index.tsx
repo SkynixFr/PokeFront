@@ -11,7 +11,6 @@ import blancotonShiny from '../../../public/images/blancoton-shiny.png';
 import { GetServerSidePropsContext } from 'next';
 import { setGlobalContext } from '../../../services/axiosInterceptor';
 import axiosInstance from '../../../services/axiosInterceptor';
-
 import Cookies from 'js-cookie';
 import axiosInstancePublic from '../../../services/axiosInstancePublic';
 
@@ -186,8 +185,6 @@ const Profile = ({
 	function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
 		const inputId = event.target.id;
 
-		console.log('name : ', event.target.id);
-
 		if (inputId === 'username') {
 			setUsername(event.target.value);
 		} else if (inputId === 'email') {
@@ -220,7 +217,10 @@ const Profile = ({
 
 			console.log('username : ', username);
 			console.log('email : ', email);
-
+			const bodyData = {
+				data: username,
+				password: password
+			};
 			if (username.trim() === '') {
 				delete body.username;
 			} else body.username = username;
@@ -229,6 +229,13 @@ const Profile = ({
 				delete body.email;
 			} else body.email = email;
 
+			const responseFirstLogin = await axios.post(
+				'http://localhost:8080/api/v2/users/login',
+				{ data: userData.username, password: password }
+			);
+			if (responseFirstLogin.status != 200) {
+				throw new Error('Not the same password');
+			}
 			const responseUpdateUser = await axiosInstancePublic.put(
 				`users/${user.id}`,
 				body,
@@ -256,13 +263,21 @@ const Profile = ({
 			setShowResultMessage(false);
 
 			if (responseUpdateUser.status === 200) {
-				console.log("j'ai modifié le client");
-				console.log(userData.password);
-				console.log(password);
-				// const loginAgainClient = axiosInstancePublic.get('/login', {
-				// 	data: username,
-				// 	password: password
-				// });
+				const res = await axios.post(
+					'http://localhost:8080/api/v2/users/login',
+					bodyData
+				);
+				const accessToken = res.data.accessToken;
+				// Le cookies de l'accessToken expire dans 10 min max
+				Cookies.set('accessToken', accessToken, {
+					expires: 10 / (24 * 60)
+				});
+				const refreshToken = res.data.refreshToken;
+				//le cookie du refreshToken s'expire dans 1 jour
+				Cookies.set('refreshToken', refreshToken, {
+					expires: 1
+				});
+				window.location.reload();
 			}
 
 			// return true;
@@ -276,7 +291,7 @@ const Profile = ({
 			// console.log(resultMessage);
 			setShowResultMessage(true);
 
-			await sleep(5000);
+			await sleep(3000);
 		}
 	};
 
