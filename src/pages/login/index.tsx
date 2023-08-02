@@ -15,12 +15,8 @@ interface FormField {
 }
 
 const Login = () => {
-	if (
-		Cookies.get('refreshToken') == undefined &&
-		Cookies.get('accessToken') == undefined
-	) {
-		Cookies.remove('accessToken');
-	}
+	Cookies.remove('refreshToken');
+	Cookies.remove('accessToken');
 	const fields: FormField[] = [
 		{
 			type: 'text',
@@ -40,7 +36,7 @@ const Login = () => {
 			required: true
 		}
 	];
-	Cookies.remove('accessToken');
+
 	return (
 		<section className="login">
 			<div className="leaf">

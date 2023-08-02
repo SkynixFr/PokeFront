@@ -30,11 +30,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 		const responseUser = await axiosInstance.get('/users/me'); // Use the axiosInstance with the config
 
-		// const responseUser = await axios.get(
-		// 	'http://localhost:8080/api/v2/users/me',
-		// 	{ headers: headers }
-		// );
-
 		const responsePokemon = await axios.get(
 			'https://pokeapi.co/api/v2/pokedex/national'
 		);
@@ -225,9 +220,6 @@ const Profile = ({
 		// Appel PokePI pour modification de l'utilisateur
 		try {
 			const body: UpdateBody = { username: '', email: '' };
-
-			console.log('username : ', username);
-			console.log('email : ', email);
 			const bodyData = {
 				data: username,
 				password: password
@@ -262,7 +254,6 @@ const Profile = ({
 			// Fermer la pop-up après la soumission
 			setShowPopup(false);
 			setShowResultMessage(false);
-
 			if (responseUpdateUser.status === 200) {
 				const res = await axios.post(
 					'http://localhost:8080/api/v2/users/login',
