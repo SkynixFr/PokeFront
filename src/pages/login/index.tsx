@@ -4,7 +4,7 @@ import logo from '../../public/images/pokefront-logo.png';
 import leaf from '../../public/images/leaf.png';
 import Image from 'next/image';
 import Cookies = require('js-cookie');
-import { cookies } from 'next/dist/client/components/headers';
+
 interface FormField {
 	type: string;
 	name: string;
@@ -17,7 +17,7 @@ interface FormField {
 const Login = () => {
 	if (
 		Cookies.get('refreshToken') == undefined &&
-		Cookies.get('accessToken') != undefined
+		Cookies.get('accessToken') == undefined
 	) {
 		Cookies.remove('accessToken');
 	}
@@ -40,7 +40,7 @@ const Login = () => {
 			required: true
 		}
 	];
-
+	Cookies.remove('accessToken');
 	return (
 		<section className="login">
 			<div className="leaf">
