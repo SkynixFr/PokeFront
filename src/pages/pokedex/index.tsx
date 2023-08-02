@@ -141,26 +141,79 @@ export default function Pokemon({ data }: { data: PokemonResponse }) {
 		event.preventDefault();
 		console.log(formData);
 
-		const response = await axios.get(
-			`https://pokeapi.co/api/v2/pokemon/${formData.searchPokemon}`
-		);
-		const pokemonDetails = [
-			{
-				id: response.data.id,
-				name: response.data.name,
-				image: response.data.sprites.front_default,
-				type: response.data.types[0].type.name
-			}
-		];
+		// IL FAUT GERER :
+		// LE NOM D UN EST RECHERCHE PAR DU TEXTE OU UN NOMBRE
+		// LE TYPE EST RECHERCHE PAR DU TEXTE
 
-		setPokemon(pokemonDetails);
-		console.log(pokemons);
+		// TESTER QUE EN PREMIER LA REQUETE AVEC LE NOM
+		// 		SI IL Y A PAS D ERREUR : RENVOYER LE RESULTAT A L UTILISATEUR
+		// 		SINON REQUETE PAR TYPE
+
+		// RECHERCHE PAR NOM OU ID
+		// try {
+		// 	const response = await axios.get(
+		// 		`https://pokeapi.co/api/v2/pokemon/${formData.searchPokemon}`
+		// 	);
+		// 	console.log('response ', response);
+
+		// 	const pokemonDetails = [
+		// 		{
+		// 			id: response.data.id,
+		// 			name: response.data.name,
+		// 			image: response.data.sprites.front_default,
+		// 			type: response.data.types[0].type.name
+		// 		}
+		// 	];
+
+		// 	setPokemon(pokemonDetails);
+		// 	console.log(pokemons);
+		// } catch (error) {
+		// 	console.error(
+		// 		"Erreur lors de la recherche par NOM de pokémon dans PokeAPI",
+		// 		error
+		// 	);
+		// }
+
+		// RECHERCHE PAR TYPE
+		try {
+			const response = await axios.get(
+				`https://pokeapi.co/api/v2/type/${formData.searchPokemon}`
+			);
+			console.log('response ', response);
+
+			const updatedResults = await Promise.all(
+				response.data.pokemon.map(async (pokemon: Pokemons) => {
+					const poke = await axios.get(pokemon.pokemon.url);
+
+					const searchNameType = `${formData.searchPokemon}`;
+
+					const updatedPokemon = {
+						...pokemon,
+						id: poke.data.id,
+						name: poke.data.name,
+						type: searchNameType,
+						image: poke.data.sprites.front_default
+					};
+					return updatedPokemon;
+				})
+			);
+
+			console.log('updatedResults ', updatedResults);
+
+			setPokemon(updatedResults);
+			console.log(pokemons);
+		} catch (error) {
+			console.error(
+				'Erreur lors de la recherche par TYPE de pokémons dans PokeAPI',
+				error
+			);
+		}
 	}
 
 	// Au changement de la barre de recherche
 	function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
 		const { name, value } = event.target;
-		setFormData({ ...formData, [name]: value });
+		setFormData({ ...formData, [name]: value.toLowerCase() });
 	}
 
 	return (
@@ -187,6 +240,7 @@ export default function Pokemon({ data }: { data: PokemonResponse }) {
 							<p className="pokemon-name"> {pokemon.name} </p>
 							<img src={pokemon.image} alt={pokemon.name} />
 							<p className="pokemon-name"> Type : {pokemon.type} </p>
+							<br></br>
 						</>
 					))
 				)}

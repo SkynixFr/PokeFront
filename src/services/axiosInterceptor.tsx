@@ -5,11 +5,30 @@ import Cookies from 'js-cookie';
 import { GetServerSidePropsContext } from 'next';
 import { serialize } from 'cookie'; // Import the serialize function from 'cookie'
 import { useRouter } from 'next/router';
+import jwt from 'jsonwebtoken';
 
 let globalContext: GetServerSidePropsContext;
 
 export function setGlobalContext(context: GetServerSidePropsContext) {
 	globalContext = context;
+}
+
+// Function to delete the access and refresh tokens cookies
+function deleteTokensCookies() {
+	if (globalContext) {
+		Cookies.remove('accessToken', { path: '/' });
+		globalContext.res.setHeader(
+			'Set-Cookie',
+			'accessToken=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/'
+		);
+		globalContext.res.setHeader(
+			'Set-Cookie',
+			'refreshToken=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/'
+		);
+	} else {
+		Cookies.remove('accessToken', { path: '/' });
+		Cookies.remove('refreshToken', { path: '/' });
+	}
 }
 
 // Add an interceptor to automatically attach the access token to requests
@@ -67,7 +86,11 @@ axiosInstance.interceptors.response.use(
 						});
 
 						// Set the new cookie in the response headers
-						globalContext.res.setHeader('Set-Cookie', cookies);
+						if (globalContext) {
+							globalContext.res.setHeader('Set-Cookie', cookies);
+						} else {
+							document.cookie = cookies;
+						}
 
 						// Retry the original request with the new access token
 						originalRequest.headers[
@@ -84,6 +107,9 @@ axiosInstance.interceptors.response.use(
 				// If the refresh token request fails, log the user out or handle the error as needed
 				console.log('Failed to refresh access token:', error);
 				// For example, you might redirect the user to the login page or show an error message
+
+				// Delete the access and refresh token cookies
+				deleteTokensCookies();
 
 				// Check if it's a server-side request or client-side request
 				if (globalContext) {
