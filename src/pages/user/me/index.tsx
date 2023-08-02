@@ -12,7 +12,7 @@ export async function getServerSideProps() {
 	const avatar = faker.image.avatarGitHub();
 
 	const jwtToken =
-		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUxZSIsInVzZXJuYW1lIjoiTHVmZnlzb25pYyIsImVtYWlsIjoicmlja3lAZ21haWwuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkVG9IZUQ4ZUtvMUJ3NFBnaEIyMGExLjR3amJZUFNmZWlsS3NTaFdjRi9hUFQ5d3RFa3FaalciLCJwb2tlZGV4IjpbInBpa2FjaHUiLCJyaW9sdSIsImx1Y2FyaW8iLCJ2aWN0aW5pIiwibWV3IiwiZWV2ZWUiXSwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yOFQwNzowNToxMy45NTdaIiwidXBkYXRlQXQiOiIyMDIzLTA4LTAxVDA5OjQyOjA2LjU2OVoiLCJpYXQiOjE2OTA5NTc5ODgsImV4cCI6MTY5MDk1ODU4OH0.kJddOglJ7XIpW4s5W9xMc_zg_xVM15EIir85dpb75ZU';
+		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUxZSIsInVzZXJuYW1lIjoiTHVmZnlzb25pYyIsImVtYWlsIjoicmlja3lAZ21haWwuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkVG9IZUQ4ZUtvMUJ3NFBnaEIyMGExLjR3amJZUFNmZWlsS3NTaFdjRi9hUFQ5d3RFa3FaalciLCJwb2tlZGV4IjpbInBpa2FjaHUiLCJyaW9sdSIsImx1Y2FyaW8iLCJ2aWN0aW5pIiwibWV3IiwiZWV2ZWUiXSwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yOFQwNzowNToxMy45NTdaIiwidXBkYXRlQXQiOiIyMDIzLTA4LTAxVDA5OjQyOjA2LjU2OVoiLCJpYXQiOjE2OTA5NjE4OTgsImV4cCI6MTY5MDk2MjQ5OH0.XvkrzRqzmB2gvoHtolBA_Qz-2vtbaYQ1BBVYZhm-evo';
 
 	const config = {
 		headers: {
@@ -63,16 +63,14 @@ export async function getServerSideProps() {
 					console.error(
 						`Error fetching Pokémon details for ${pokemonName}`
 					);
-					return null;
+					return {
+						props: {}
+					};
 				}
 			})
 		);
 
-		const filteredPokemonData = pokemonDetails.filter(
-			pokemon => pokemon !== null
-		);
-
-		const sortedPokemonData = [...filteredPokemonData].sort(
+		const sortedPokemonData = [...pokemonDetails].sort(
 			(pokemonA, pokemonB) => parseInt(pokemonA.id) - parseInt(pokemonB.id)
 		);
 

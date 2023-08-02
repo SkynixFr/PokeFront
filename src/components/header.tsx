@@ -17,13 +17,13 @@ const Header = () => {
 					<Image src={pokefrontLogo} alt="Pokefront logo" priority></Image>
 				</div>
 				<ul className="header-links">
-					<li className="header-link pokedex">
+					<li className="header-link pokedex-icon">
 						<Link href="/pokedex">
 							<Image src={pokedex} alt="Pokedex" priority></Image>
 							<span className="tooltip">Pokedex</span>
 						</Link>
 					</li>
-					<li className="header-link trainer">
+					<li className="header-link trainer-icon">
 						<Link href="/user/me">
 							<Image src={trainer} alt="Trainer" priority></Image>
 							<span className="tooltip">Profil</span>

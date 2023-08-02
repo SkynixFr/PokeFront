@@ -1,250 +1,494 @@
 import axios from 'axios';
 import { useState } from 'react';
-import { Pokemon } from './interface';
-import Search from '../../components/Search';
+import PokedexCard from '../../components/pokedexCard';
+import pokedexTitle from '../../public/images/pokedex-title.png';
+import Image from 'next/image';
+import {
+	FaMagnifyingGlass,
+	FaArrowLeft,
+	FaArrowRight,
+	FaArrowDownShortWide,
+	FaArrowDownWideShort
+} from 'react-icons/fa6';
+import spriteDefault from '../../public/images/sprite_default.png';
+import checkmark from '../../public/images/checkmark.svg';
+import Cookies from 'js-cookie';
+import axiosInstance from '../../services/axiosInstance';
 
 interface Pokemons {
 	name: string;
 	url: string;
 }
 
+interface TypeInfo {
+	type: {
+		name: string;
+	};
+}
+
+interface PokemonData {
+	id: string;
+	name: string;
+	types: string[];
+	sprite: string;
+}
+
+interface FullPokemonData {
+	pokemons: PokemonData[];
+	next: string;
+	previous: string;
+}
+
 export async function getServerSideProps() {
 	try {
-		const response = await axios.get(
+		const responsePokemon = await axios.get(
 			'https://pokeapi.co/api/v2/pokemon?limit=20&offset=00'
 		);
 
-		const data = response.data;
-		// console.log(data);
+		const pokemons = responsePokemon.data;
+		const { next, previous } = responsePokemon.data;
 
-		const updatedResults = await Promise.all(
-			data.results.map(async (pokemon: Pokemons) => {
-				const poke = await axios.get(pokemon.url);
+		const pokemonDetails = await Promise.all(
+			pokemons.results.map(async (pokemon: Pokemons) => {
+				try {
+					const responsePokemonDetail = await axios.get(
+						`https://pokeapi.co/api/v2/pokemon/${pokemon.name.toLowerCase()}`
+					);
 
-				const updatedPokemon = {
-					...pokemon,
-					id: poke.data.id,
-					type: poke.data.types[0].type.name,
-					image: poke.data.sprites.front_default
-				};
-				return updatedPokemon;
+					const pokemonDetail = responsePokemonDetail.data;
+
+					const [firstChar, ...restofChars] = pokemonDetail.name;
+					const capitalizedName = `${firstChar.toUpperCase()}${restofChars.join(
+						''
+					)}`;
+
+					return {
+						name: capitalizedName,
+						id: pokemonDetail.id,
+						sprite: pokemonDetail.sprites.front_default,
+						types: pokemonDetail.types.map(
+							(typeInfo: TypeInfo) => typeInfo.type.name
+						)
+					};
+				} catch (error) {
+					if (axios.isAxiosError(error)) {
+						console.error(
+							`Error fetching Pokémon details for ${pokemon.name}`
+						);
+						return {
+							props: {}
+						};
+					}
+				}
 			})
 		);
 
-		data.results = updatedResults;
-		console.log(data.results);
+		const filteredPokemons = pokemonDetails.filter(
+			pokemon => pokemon !== null
+		);
+
+		const fullPokemonData = {
+			pokemons: filteredPokemons,
+			next,
+			previous
+		};
 
 		return {
 			props: {
-				data
+				pokemons: fullPokemonData
 			}
 		};
 	} catch (error) {
-		return {
-			props: {
-				data: { results: [] }
-			}
-		};
+		if (axios.isAxiosError(error)) {
+			return {
+				props: {
+					pokemons: []
+				}
+			};
+		}
 	}
 }
 
-interface PokemonResponse {
-	count: number;
-	next: string;
-	previous: string;
-	results: { id: number; image: string; name: string; type: string }[];
-}
-
-export default function Pokemon({ data }: { data: PokemonResponse }) {
-	const [pokemons, setPokemon] = useState(data.results);
-	const [req, setReq] = useState(data);
+const Pokedex = ({ pokemons }: { pokemons: FullPokemonData }) => {
+	const [pokemonDetails, setPokemonDetails] = useState<PokemonData[]>(
+		pokemons.pokemons
+	);
+	const [next, setNext] = useState<string>(pokemons.next);
+	const [prev, setPrev] = useState<string>(pokemons.previous);
+	const [originalPokemonData, setOriginalPokemonData] = useState<
+		PokemonData[]
+	>(pokemons.pokemons);
+	const [originalNext, setOriginalNext] = useState<string>(pokemons.next);
+	const [originalPrev, setOriginalPrev] = useState<string>(pokemons.previous);
+	const [sortOption, setSortOption] = useState<'asc' | 'desc' | 'name'>('asc');
 	const [formData, setFormData] = useState<{ [key: string]: string }>({});
+	const types = [
+		'grass',
+		'fire',
+		'bug',
+		'dark',
+		'dragon',
+		'electric',
+		'fairy',
+		'fighting',
+		'flying',
+		'ghost',
+		'normal',
+		'ground',
+		'ice',
+		'poison',
+		'psychic',
+		'rock',
+		'steel',
+		'water'
+	];
 
-	const fetchDataFromAPInext = async () => {
-		try {
-			if (req.next != null) {
-				const res = await axios.get(req.next);
-				console.log(req.next, res);
+	const [selectedPokemon, setSelectedPokemon] = useState<string[]>([]);
 
-				const updatedResults = await Promise.all(
-					res.data.results.map(async (pokemon: Pokemons) => {
-						const poke = await axios.get(pokemon.url);
-
-						const updatedPokemon = {
-							...pokemon,
-							id: poke.data.id,
-							type: poke.data.types[0].type.name,
-							image: poke.data.sprites.front_default
-						};
-						return updatedPokemon;
-					})
-				);
-
-				const newData = res.data;
-				newData.results = updatedResults;
-
-				setPokemon(newData.results);
-				setReq(res.data);
-			} else {
-				window.alert(
-					'\nVous êtes sur la dernière page du pokédex \nImpossible de trouver une page suivante'
-				);
-			}
-		} catch (error) {
-			console.error(
-				'Erreur lors de la récupération des pokémons suivants depuis PokeAPI',
-				error
-			);
-		}
-	};
-
-	const fetchDataFromAPIprev = async () => {
-		try {
-			if (req.previous != null) {
-				const res = await axios.get(req.previous);
-				console.log(req.next);
-
-				const updatedResults = await Promise.all(
-					res.data.results.map(async (pokemon: Pokemons) => {
-						const poke = await axios.get(pokemon.url);
-
-						const updatedPokemon = {
-							...pokemon,
-							id: poke.data.id,
-							type: poke.data.types[0].type.name,
-							image: poke.data.sprites.front_default
-						};
-						return updatedPokemon;
-					})
-				);
-
-				const newData = res.data;
-				newData.results = updatedResults;
-
-				setPokemon(newData.results);
-				setReq(res.data);
-			} else {
-				window.alert(
-					'\nVous êtes sur la première page du pokédex \nImpossible de trouver une page précédente'
-				);
-			}
-		} catch (error) {
-			console.error(
-				'Erreur lors de la récupération des pokémons précedents depuis PokeAPI',
-				error
-			);
-		}
-	};
-
-	// récupérer la donnée dans le recherche
 	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
-		console.log(formData);
 
-		// IL FAUT GERER :
-		// LE NOM D UN EST RECHERCHE PAR DU TEXTE OU UN NOMBRE
-		// LE TYPE EST RECHERCHE PAR DU TEXTE
+		const searchData = formData.searchData?.toLowerCase?.();
 
-		// TESTER QUE EN PREMIER LA REQUETE AVEC LE NOM
-		// 		SI IL Y A PAS D ERREUR : RENVOYER LE RESULTAT A L UTILISATEUR
-		// 		SINON REQUETE PAR TYPE
+		if (!searchData || searchData === '') {
+			setPokemonDetails(originalPokemonData);
+		} else if (types.includes(searchData)) {
+			try {
+				const responsePokemon = await axios.get(
+					`https://pokeapi.co/api/v2/type/${searchData}`
+				);
 
-		// RECHERCHE PAR NOM OU ID
-		// try {
-		// 	const response = await axios.get(
-		// 		`https://pokeapi.co/api/v2/pokemon/${formData.searchPokemon}`
-		// 	);
-		// 	console.log('response ', response);
+				const updatedPokemons = await Promise.all(
+					responsePokemon.data.pokemon.map(async (pokemon: any) => {
+						try {
+							const responsePokemonDetail = await axios.get(
+								`https://pokeapi.co/api/v2/pokemon/${pokemon.pokemon.name}`
+							);
 
-		// 	const pokemonDetails = [
-		// 		{
-		// 			id: response.data.id,
-		// 			name: response.data.name,
-		// 			image: response.data.sprites.front_default,
-		// 			type: response.data.types[0].type.name
-		// 		}
-		// 	];
+							const pokemonDetail = responsePokemonDetail.data;
 
-		// 	setPokemon(pokemonDetails);
-		// 	console.log(pokemons);
-		// } catch (error) {
-		// 	console.error(
-		// 		"Erreur lors de la recherche par NOM de pokémon dans PokeAPI",
-		// 		error
-		// 	);
-		// }
+							const [firstChar, ...restofChars] = pokemonDetail.name;
+							const capitalizedName = `${firstChar.toUpperCase()}${restofChars.join(
+								''
+							)}`;
 
-		// RECHERCHE PAR TYPE
+							return {
+								name: capitalizedName,
+								id: pokemonDetail.id,
+								sprite: pokemonDetail.sprites.front_default
+									? pokemonDetail.sprites.front_default
+									: spriteDefault,
+								types: pokemonDetail.types.map(
+									(typeInfo: TypeInfo) => typeInfo.type.name
+								)
+							};
+						} catch (error) {
+							console.error(
+								`Error fetching Pokémon details for ${pokemon.pokemon.name}`
+							);
+							return null;
+						}
+					})
+				);
+
+				const filteredPokemons = updatedPokemons.filter(
+					pokemon => pokemon !== null
+				);
+
+				setNext('');
+				setPrev('');
+				setPokemonDetails(filteredPokemons);
+			} catch (error) {
+				console.error(error);
+			}
+		} else {
+			try {
+				const responsePokemon = await axios.get(
+					`https://pokeapi.co/api/v2/pokemon/${searchData}`
+				);
+
+				const pokemonDetail = responsePokemon.data;
+
+				const [firstChar, ...restofChars] = pokemonDetail.name;
+				const capitalizedName = `${firstChar.toUpperCase()}${restofChars.join(
+					''
+				)}`;
+
+				const updatedPokemons = [
+					{
+						name: capitalizedName,
+						id: pokemonDetail.id,
+						sprite: pokemonDetail.sprites.front_default
+							? pokemonDetail.sprites.front_default
+							: spriteDefault,
+						types: pokemonDetail.types.map(
+							(typeInfo: TypeInfo) => typeInfo.type.name
+						)
+					}
+				];
+
+				const filteredPokemons = updatedPokemons.filter(
+					pokemon => pokemon !== null
+				);
+
+				setNext('');
+				setPrev('');
+				setPokemonDetails(filteredPokemons);
+			} catch (error) {
+				console.error(error);
+			}
+		}
+	}
+
+	function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+		const { name, value } = event.target;
+		setFormData({ ...formData, [name]: value });
+
+		if (name === 'searchData' && value.trim() === '') {
+			setPokemonDetails(pokemons.pokemons);
+			setNext(originalNext);
+			setPrev(originalPrev);
+		}
+	}
+
+	function handleSort(option: 'asc' | 'desc' | 'name') {
+		setSortOption(option);
+		setPokemonDetails(prevPokemons =>
+			[...prevPokemons].sort((pokemonA, pokemonB) => {
+				switch (option) {
+					case 'asc':
+						return parseInt(pokemonA.id) - parseInt(pokemonB.id);
+					case 'desc':
+						return parseInt(pokemonB.id) - parseInt(pokemonA.id);
+					case 'name':
+						return pokemonA.name.localeCompare(pokemonB.name);
+					default:
+						return 0;
+				}
+			})
+		);
+	}
+
+	async function handleReqNext() {
 		try {
-			const response = await axios.get(
-				`https://pokeapi.co/api/v2/type/${formData.searchPokemon}`
-			);
-			console.log('response ', response);
+			const responsePokemon = await axios.get(next);
+			setNext(responsePokemon.data.next);
+			setPrev(responsePokemon.data.previous);
 
-			const updatedResults = await Promise.all(
-				response.data.pokemon.map(async (pokemon: Pokemons) => {
-					const poke = await axios.get(pokemon.pokemon.url);
+			const updatedPokemons = await Promise.all(
+				responsePokemon.data.results.map(async (pokemon: Pokemons) => {
+					const responsePokemonDetail = await axios.get(
+						`https://pokeapi.co/api/v2/pokemon/${pokemon.name.toLowerCase()}`
+					);
 
-					const searchNameType = `${formData.searchPokemon}`;
+					const pokemonDetail = responsePokemonDetail.data;
 
-					const updatedPokemon = {
-						...pokemon,
-						id: poke.data.id,
-						name: poke.data.name,
-						type: searchNameType,
-						image: poke.data.sprites.front_default
-					};
-					return updatedPokemon;
+					const [firstChar, ...restofChars] = pokemonDetail.name;
+					const capitalizedName = `${firstChar.toUpperCase()}${restofChars.join(
+						''
+					)}`;
+
+					if (pokemonDetail.id && pokemonDetail.id <= 1010) {
+						return {
+							name: capitalizedName,
+							id: pokemonDetail.id,
+							sprite: pokemonDetail.sprites.front_default
+								? pokemonDetail.sprites.front_default
+								: spriteDefault,
+							types: pokemonDetail.types.map(
+								(typeInfo: TypeInfo) => typeInfo.type.name
+							)
+						};
+					} else {
+						setNext('');
+						return null;
+					}
 				})
 			);
 
-			console.log('updatedResults ', updatedResults);
-
-			setPokemon(updatedResults);
-			console.log(pokemons);
-		} catch (error) {
-			console.error(
-				'Erreur lors de la recherche par TYPE de pokémons dans PokeAPI',
-				error
+			const filteredPokemons = updatedPokemons.filter(
+				pokemon => pokemon !== null
 			);
+			setPokemonDetails(filteredPokemons);
+		} catch (error) {
+			console.error(error);
 		}
 	}
 
-	// Au changement de la barre de recherche
-	function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-		const { name, value } = event.target;
-		setFormData({ ...formData, [name]: value.toLowerCase() });
+	async function handleReqPrev() {
+		try {
+			const responsePokemon = await axios.get(prev);
+			setNext(responsePokemon.data.next);
+			setPrev(responsePokemon.data.previous);
+
+			const updatedPokemons = await Promise.all(
+				responsePokemon.data.results.map(async (pokemon: Pokemons) => {
+					const responsePokemonDetail = await axios.get(
+						`https://pokeapi.co/api/v2/pokemon/${pokemon.name.toLowerCase()}`
+					);
+
+					const pokemonDetail = responsePokemonDetail.data;
+
+					const [firstChar, ...restofChars] = pokemonDetail.name;
+					const capitalizedName = `${firstChar.toUpperCase()}${restofChars.join(
+						''
+					)}`;
+
+					return {
+						name: capitalizedName,
+						id: pokemonDetail.id,
+						sprite: pokemonDetail.sprites.front_default
+							? pokemonDetail.sprites.front_default
+							: spriteDefault,
+						types: pokemonDetail.types.map(
+							(typeInfo: TypeInfo) => typeInfo.type.name
+						)
+					};
+				})
+			);
+
+			const filteredPokemons = updatedPokemons.filter(
+				pokemon => pokemon !== null
+			);
+
+			setPokemonDetails(filteredPokemons);
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	function handleSavePokemon(name: string) {
+		setSelectedPokemon(prevSelected =>
+			prevSelected.includes(name)
+				? prevSelected.filter(selectedName => selectedName !== name)
+				: [...prevSelected, name]
+		);
+	}
+
+	async function submitPokemons() {
+		try {
+			const response = await axiosInstance.post('/users/pokemons', {
+				selectedPokemon
+			});
+		} catch (error) {}
 	}
 
 	return (
-		<section className="{pokemon-list-container}">
-			<form className="form-fields" onSubmit={handleSubmit}>
-				<input
-					type="search"
-					name="searchPokemon"
-					id="searchPokemon"
-					onChange={handleChange}
-				/>
-				<button type="submit">Valider</button>
-			</form>
+		<section className="pokedex">
+			<div className="pokedex-title">
+				<Image src={pokedexTitle} alt="Pokedex title" priority></Image>
+			</div>
+			<div className="pokedex-container">
+				<div className="pokedex-filters">
+					<div className="pokedex-searchbar">
+						<form onSubmit={handleSubmit}>
+							<input
+								type="search"
+								name="searchData"
+								id="searchData"
+								placeholder="Rechercher des pokemons par ID/Nom/Type"
+								onChange={handleChange}
+							/>
+							<div className="search-icon">
+								<FaMagnifyingGlass />
+							</div>
+						</form>
+					</div>
+					<div className="pokedex-sort">
+						<ul>
+							<li>
+								<input
+									type="radio"
+									name="sortOption"
+									id="name"
+									defaultChecked={sortOption === 'name'}
+									onClick={() => handleSort('name')}
+								/>
+								<label htmlFor="sortAZ" className="pokedex-sort-icon">
+									A-Z
+								</label>
+							</li>
+							<li>
+								<input
+									type="radio"
+									name="sortOption"
+									id="asc"
+									defaultChecked={sortOption === 'asc'}
+									onClick={() => handleSort('asc')}
+								/>
+								<label
+									htmlFor="sortIDAsc"
+									className="pokedex-sort-icon"
+								>
+									<span>ID</span> <FaArrowDownShortWide />
+								</label>
+							</li>
+							<li>
+								<input
+									type="radio"
+									name="sortOption"
+									id="desc"
+									defaultChecked={sortOption === 'desc'}
+									onClick={() => handleSort('desc')}
+								/>
+								<label
+									htmlFor="sortIDDesc"
+									className="pokedex-sort-icon"
+								>
+									<span>ID</span>
+									<FaArrowDownWideShort />
+								</label>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div className="pokedex-pokemons">
+					{prev && (
+						<button className="pagination prev" onClick={handleReqPrev}>
+							<FaArrowLeft />
+						</button>
+					)}
 
-			<button onClick={fetchDataFromAPIprev}>Précédent</button>
-			<button onClick={fetchDataFromAPInext}>Suivant</button>
-			<ul>
-				{pokemons.length === 0 ? (
-					<div>Loading...</div>
-				) : (
-					pokemons.map(pokemon => (
-						<>
-							<p className="pokemon-name"> # {pokemon.id} </p>
-							<p className="pokemon-name"> {pokemon.name} </p>
-							<img src={pokemon.image} alt={pokemon.name} />
-							<p className="pokemon-name"> Type : {pokemon.type} </p>
-							<br></br>
-						</>
-					))
-				)}
-			</ul>
+					<div className="pokedex-cards">
+						{pokemonDetails.map(pokemon => (
+							<div
+								className={`pokedex-card-add ${
+									selectedPokemon.includes(pokemon.name)
+										? 'selected'
+										: ''
+								}`}
+								key={pokemon.id}
+								onClick={() => handleSavePokemon(pokemon.name)}
+							>
+								{selectedPokemon.includes(pokemon.name) && (
+									<div className="checkmark-container">
+										<Image
+											src={checkmark}
+											alt="Checkmark"
+											width={24}
+											height={24}
+										/>
+									</div>
+								)}
+								<PokedexCard
+									pokemon={pokemon}
+									key={pokemon.id}
+								></PokedexCard>
+							</div>
+						))}
+					</div>
+					{next && (
+						<button className="pagination next" onClick={handleReqNext}>
+							<FaArrowRight />
+						</button>
+					)}
+				</div>
+				<div className="add-pokemon">
+					<button onClick={submitPokemons}>Ajouter les pokémons</button>
+				</div>
+			</div>
 		</section>
 	);
-}
+};
+
+export default Pokedex;
