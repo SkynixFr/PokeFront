@@ -8,22 +8,21 @@ import profileTitle from '../../../public/images/profil-title.png';
 import blancoton from '../../../public/images/blancoton.png';
 import blancotonShiny from '../../../public/images/blancoton-shiny.png';
 
+const jwtToken =
+	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUyMCIsInVzZXJuYW1lIjoiTmV3dCIsImVtYWlsIjoic2FyYW55dUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCRNYnl3UEZiWEZMLlowWk12SUZ0bGdPcU9vaVlZUVZicDF4aDBFdEh0cW5hTy8vaXp1T0EvTyIsInBva2VkZXgiOlsicGlrYWNodSIsInJpb2x1IiwiZWV2ZWUiXSwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yOFQwNzowNToxNC40MDRaIiwidXBkYXRlQXQiOiIyMDIzLTA4LTAxVDE2OjM5OjAzLjg5M1oiLCJpYXQiOjE2OTA5MDk0OTIsImV4cCI6MTY5MDkxMDA5Mn0.cfW4z1S7pYOShgcdKOmZFGDR4yxuVBIvhQgIZi5GPJI';
+
+const headers = {
+	Authorization: `Bearer ${jwtToken}`,
+	'Content-Type': 'application/json'
+};
+
 export async function getServerSideProps() {
 	const avatar = faker.image.avatarGitHub();
-
-	const jwtToken =
-		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0YzM2OGFhNzAyZTUyMjE4NWQ0OGUxZSIsInVzZXJuYW1lIjoiTHVmZnlzb25pYyIsImVtYWlsIjoicmlja3lAZ21haWwuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkVG9IZUQ4ZUtvMUJ3NFBnaEIyMGExLjR3amJZUFNmZWlsS3NTaFdjRi9hUFQ5d3RFa3FaalciLCJwb2tlZGV4IjpbInBpa2FjaHUiLCJyaW9sdSIsImx1Y2FyaW8iLCJ2aWN0aW5pIiwibWV3IiwiZWV2ZWUiXSwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yOFQwNzowNToxMy45NTdaIiwidXBkYXRlQXQiOiIyMDIzLTA4LTAxVDA5OjQyOjA2LjU2OVoiLCJpYXQiOjE2OTA5NTc5ODgsImV4cCI6MTY5MDk1ODU4OH0.kJddOglJ7XIpW4s5W9xMc_zg_xVM15EIir85dpb75ZU';
-
-	const config = {
-		headers: {
-			Authorization: `Bearer ${jwtToken}`
-		}
-	};
 
 	try {
 		const responseUser = await axios.get(
 			'http://localhost:8080/api/v2/users/me',
-			config
+			{ headers: headers }
 		);
 
 		const responsePokemon = await axios.get(
@@ -121,6 +120,11 @@ interface TypeInfo {
 	};
 }
 
+interface UpdateBody {
+	username?: string;
+	email?: string;
+}
+
 const Profile = ({
 	user,
 	avatar,
@@ -133,6 +137,10 @@ const Profile = ({
 	pokemonData: PokemonData[];
 }) => {
 	const [userData, setUserData] = useState(user);
+	const [showPopup, setShowPopup] = useState(false);
+	const [showResultMessage, setShowResultMessage] = useState(false);
+	const [resultMessage, setResultMessage] = useState('');
+	const [colorResultMessage, setColorResultMessage] = useState('');
 	const pokedexCompletion =
 		userData.pokedex && totalPokemon > 0
 			? ((userData.pokedex.length / totalPokemon) * 100).toFixed(2)
@@ -150,6 +158,81 @@ const Profile = ({
 
 		return date.toLocaleDateString('fr-FR', options);
 	}
+
+	function isValidEmail(email: string): boolean {
+		const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+		return emailPattern.test(email);
+	}
+
+	function sleep(ms: number): Promise<void> {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	}
+
+	const handleEditClick = () => {
+		setShowPopup(true);
+	};
+
+	const handlePopupClose = () => {
+		setShowResultMessage(false);
+		setShowPopup(false);
+	};
+
+	const handleSubmit = async (event: React.FormEvent) => {
+		event.preventDefault();
+
+		// Soumettre les informations modifiées ici (username, email, password)
+		// console.log('Username:', user.username);
+		// console.log('Email:', user.email);
+		// console.log('Password:', user.password);
+
+		// Appel PokePI pour modification de l'utilisateur
+		try {
+			const username = document.getElementById('username').value;
+			const email = document.getElementById('email').value;
+
+			const body: UpdateBody = { username: '', email: '' };
+
+			if (username.trim() === '') {
+				delete body.username;
+			} else body.username = username;
+
+			if (email.trim() === '') {
+				delete body.email;
+			} else body.email = email;
+
+			const responseUpdateUser = await axios.put(
+				`http://localhost:8080/api/v2/users/${user.id}`,
+				body,
+				{
+					headers: headers
+				}
+			);
+
+			console.log(responseUpdateUser);
+
+			setColorResultMessage(`green`);
+			setResultMessage(`Modification effectuée avec succès !`);
+
+			await sleep(3000);
+
+			// Fermer la pop-up après la soumission
+			setShowPopup(false);
+			setShowResultMessage(false);
+
+			// return true;
+		} catch (error) {
+			console.error(`Error while updating user ${user.username}`);
+			console.log('Erreur : ', error);
+			setColorResultMessage(`red`);
+			setResultMessage(`Erreur lors de la modification de vos informations`);
+		} finally {
+			console.log('Je suis dans le finally');
+			console.log(resultMessage);
+			setShowResultMessage(true);
+
+			await sleep(5000);
+		}
+	};
 
 	return (
 		<>
@@ -226,7 +309,11 @@ const Profile = ({
 									</ul>
 								</div>
 								<div className="user-edition">
-									<button type="submit" className="user-update">
+									<button
+										type="submit"
+										className="user-update"
+										onClick={handleEditClick}
+									>
 										<FaPencil />
 										<span>Modifier </span>
 									</button>
@@ -235,6 +322,61 @@ const Profile = ({
 										<span>Supprimer </span>
 									</button>
 								</div>
+
+								{showPopup && (
+									<div className="popup">
+										<div className="popup-content">
+											{/* Formulaire de modification des informations de l'utilisateur */}
+											<h1>Modifier vos informations</h1>
+											<form onSubmit={handleSubmit}>
+												<div className="form-group">
+													<label htmlFor="username">
+														Pseudo :{' '}
+													</label>
+													<input
+														type="text"
+														id="username"
+														placeholder="Nouveau pseudo"
+														onChange={() => {}}
+														// onChange={e =>
+														// 	(user.username = e.target.value)
+														// }
+													/>
+												</div>
+
+												<div className="form-group">
+													<label htmlFor="email">Email : </label>
+													<input
+														type="email"
+														id="email"
+														placeholder="Nouvel email"
+														onChange={() => {}}
+														// onChange={e =>
+														// 	(user.email = e.target.value)
+														// }
+													/>
+												</div>
+
+												{showResultMessage && (
+													<div
+														className="field-result"
+														style={{ color: colorResultMessage }}
+													>
+														{resultMessage}
+													</div>
+												)}
+
+												<button type="submit">Modifier</button>
+												<button
+													type="button"
+													onClick={handlePopupClose}
+												>
+													Annuler
+												</button>
+											</form>
+										</div>
+									</div>
+								)}
 							</div>
 						</div>
 						<div className="underline profile"></div>
