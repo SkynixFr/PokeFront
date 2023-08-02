@@ -13,6 +13,7 @@ import { setGlobalContext } from '../../../services/axiosInterceptor';
 import axiosInstance from '../../../services/axiosInterceptor';
 import Cookies from 'js-cookie';
 import axiosInstancePublic from '../../../services/axiosInstancePublic';
+import { useRouter } from 'next/router';
 
 const accessToken = Cookies.get('acessToken');
 
@@ -148,16 +149,17 @@ const Profile = ({
 	const [userData, setUserData] = useState(user);
 	const [showPopup, setShowPopup] = useState(false);
 	const [showResultMessage, setShowResultMessage] = useState(false);
+	const [showDeleteMessage, setShowDeleteMessage] = useState(false);
+	const [showDeletePopUp, setShowDeletePopUp] = useState(false);
 	const [resultMessage, setResultMessage] = useState('');
+	const [deleteMessage, setDeleteMessage] = useState('');
 	const [username, setUsername] = useState('');
 	const [email, setEmail] = useState('');
 	const [colorResultMessage, setColorResultMessage] = useState('');
-
+	const [colorDeleteMessage, setColorDeleteMessage] = useState('');
 	const [password, setPassword] = useState('');
-	const [formData, setFormData] = useState<{ [key: string]: string }>({});
-	const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>(
-		{}
-	);
+
+	const router = useRouter();
 
 	const pokedexCompletion =
 		userData.pokedex && totalPokemon > 0
@@ -203,9 +205,18 @@ const Profile = ({
 		setShowPopup(true);
 	};
 
+	const handleDeleteClick = () => {
+		setShowDeletePopUp(true);
+	};
+
 	const handlePopupClose = () => {
 		setShowResultMessage(false);
 		setShowPopup(false);
+	};
+
+	const handleDeletePopupClose = () => {
+		setShowDeleteMessage(false);
+		setShowDeletePopUp(false);
 	};
 
 	const handleSubmit = async (event: React.FormEvent) => {
@@ -243,20 +254,10 @@ const Profile = ({
 					headers: headers
 				}
 			);
-			// const responseUpdateUser = await axios.put(
-			// 	`http://localhost:8080/api/v2/users/${user.id}`,
-			// 	body,
-			// 	{
-			// 		headers: headers
-			// 	}
-			// );
 
-			//console.log(responseUpdateUser);
+			setShowResultMessage(true);
 
-			setColorResultMessage(`green`);
-			setResultMessage(`Modification effectuée avec succès !`);
-
-			await sleep(3000);
+			sleep(3000);
 
 			// Fermer la pop-up après la soumission
 			setShowPopup(false);
@@ -277,21 +278,59 @@ const Profile = ({
 				Cookies.set('refreshToken', refreshToken, {
 					expires: 1
 				});
+
 				window.location.reload();
 			}
-
-			// return true;
 		} catch (error) {
 			// console.error(`Error while updating user ${user.username}`);
 			// console.log('Erreur : ', error);
 			setColorResultMessage(`red`);
 			setResultMessage(`Erreur lors de la modification de vos informations`);
-		} finally {
-			// console.log('Je suis dans le finally');
-			// console.log(resultMessage);
-			setShowResultMessage(true);
 
-			await sleep(3000);
+			setShowResultMessage(true);
+		}
+	};
+
+	const handleDelete = async (event: React.FormEvent) => {
+		event.preventDefault();
+
+		// Appel PokePI pour suppression de l'utilisateur
+		try {
+			const responseUpdateUser = await axiosInstancePublic.delete(
+				`users/${user.id}`,
+				{
+					headers: headers
+				}
+			);
+
+			console.log(responseUpdateUser);
+
+			setColorDeleteMessage(`green`);
+			setDeleteMessage(`Compte supprimé avec succès !`);
+
+			setShowDeleteMessage(true);
+
+			sleep(3000);
+
+			// Fermer la pop-up après la confirmation
+			setShowPopup(false);
+			setShowResultMessage(false);
+
+			if (responseUpdateUser.status === 200) {
+				Cookies.remove('refreshToken');
+				Cookies.remove('accessToken');
+				router.push('../../login');
+			}
+		} catch (error) {
+			console.error(
+				`Erreur lors de la suppression du compte de l'utilisateur : ${user.username}`
+			);
+			console.log('Erreur : ', error);
+
+			setColorDeleteMessage(`red`);
+			setDeleteMessage(`Erreur lors de la suppression de votre compte`);
+
+			setShowDeleteMessage(true);
 		}
 	};
 
@@ -378,7 +417,11 @@ const Profile = ({
 										<FaPencil />
 										<span>Modifier </span>
 									</button>
-									<button type="submit" className="user-delete">
+									<button
+										type="submit"
+										className="user-delete"
+										onClick={handleDeleteClick}
+									>
 										<FaTrashCan />
 										<span>Supprimer </span>
 									</button>
@@ -418,7 +461,7 @@ const Profile = ({
 													<input
 														type="password"
 														id="password"
-														placeholder="nouveau mot de passe"
+														placeholder="Mot de passe actuel"
 														onChange={handleChange}
 														// onChange={e =>
 														// 	(user.email = e.target.value)
@@ -438,6 +481,38 @@ const Profile = ({
 												<button
 													type="button"
 													onClick={handlePopupClose}
+												>
+													Annuler
+												</button>
+											</form>
+										</div>
+									</div>
+								)}
+
+								{showDeletePopUp && (
+									<div className="popup">
+										<div className="popup-content">
+											{/* Pop up validation suppression de compte */}
+											<h1>
+												Êtes-vous sûr de vouloir supprimer votre
+												compte ?
+											</h1>
+											<form onSubmit={handleDelete}>
+												{showDeleteMessage && (
+													<div
+														className="field-result"
+														style={{ color: colorDeleteMessage }}
+													>
+														{deleteMessage}
+													</div>
+												)}
+
+												<button type="submit">
+													Confirmer la suppression
+												</button>
+												<button
+													type="button"
+													onClick={handleDeletePopupClose}
 												>
 													Annuler
 												</button>
