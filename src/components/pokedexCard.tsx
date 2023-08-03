@@ -9,9 +9,13 @@ interface PokemonData {
 
 interface PokedexCardProps {
 	pokemon: PokemonData;
+	useCustomFont?: boolean;
 }
 
-const PokedexCard: React.FC<PokedexCardProps> = ({ pokemon }) => {
+const PokedexCard: React.FC<PokedexCardProps> = ({
+	pokemon,
+	useCustomFont
+}) => {
 	const typeClassNames = pokemon.types
 		.map(type => `type-${type.toLowerCase()}`)
 		.join(' ');
@@ -81,7 +85,15 @@ const PokedexCard: React.FC<PokedexCardProps> = ({ pokemon }) => {
 				/>
 			</div>
 			<div className="card-name">
-				<h1>{pokemon.name}</h1>
+				<h1
+					style={{
+						fontFamily: useCustomFont
+							? 'Zarbi, sans-serif'
+							: 'Clash Display, sans-serif'
+					}}
+				>
+					{pokemon.name}
+				</h1>
 			</div>
 		</div>
 	);

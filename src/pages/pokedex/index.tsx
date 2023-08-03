@@ -12,8 +12,10 @@ import {
 } from 'react-icons/fa6';
 import spriteDefault from '../../public/images/sprite_default.png';
 import checkmark from '../../public/images/checkmark.svg';
-import Cookies from 'js-cookie';
-import axiosInstance from '../../services/axiosInstance';
+import axiosInstancePublic from '../../services/axiosInstancePublic';
+import { useRouter } from 'next/router';
+import zarbi from '../../public/images/zarbi.png';
+import professeurChen from '../../public/images/professeur-chen.png';
 
 interface Pokemons {
 	name: string;
@@ -142,8 +144,9 @@ const Pokedex = ({ pokemons }: { pokemons: FullPokemonData }) => {
 		'steel',
 		'water'
 	];
-
 	const [selectedPokemon, setSelectedPokemon] = useState<string[]>([]);
+	const [useCustomFont, setUseCustomFont] = useState(false);
+	const router = useRouter();
 
 	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
@@ -367,14 +370,40 @@ const Pokedex = ({ pokemons }: { pokemons: FullPokemonData }) => {
 
 	async function submitPokemons() {
 		try {
-			const response = await axiosInstance.post('/users/pokemons', {
-				selectedPokemon
+			await axiosInstancePublic.post('/users/pokemons', {
+				pokemons: selectedPokemon
 			});
-		} catch (error) {}
+
+			router.push('/user/me');
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	function handleChangeFont() {
+		setUseCustomFont(!useCustomFont);
 	}
 
 	return (
 		<section className="pokedex">
+			<div className="secret-zarbi">
+				<Image
+					src={zarbi}
+					alt="zarbi"
+					priority
+					onClick={handleChangeFont}
+				/>
+			</div>
+
+			<div className="professeur-chen">
+				<Image
+					src={professeurChen}
+					alt="professeurChen"
+					priority
+					onClick={handleChangeFont}
+				/>
+			</div>
+
 			<div className="pokedex-title">
 				<Image src={pokedexTitle} alt="Pokedex title" priority></Image>
 			</div>
@@ -473,6 +502,7 @@ const Pokedex = ({ pokemons }: { pokemons: FullPokemonData }) => {
 								<PokedexCard
 									pokemon={pokemon}
 									key={pokemon.id}
+									useCustomFont={useCustomFont}
 								></PokedexCard>
 							</div>
 						))}
@@ -484,7 +514,12 @@ const Pokedex = ({ pokemons }: { pokemons: FullPokemonData }) => {
 					)}
 				</div>
 				<div className="add-pokemon">
-					<button onClick={submitPokemons}>Ajouter les pokémons</button>
+					<button
+						onClick={submitPokemons}
+						disabled={selectedPokemon.length < 1}
+					>
+						Ajouter les pokémons
+					</button>
 				</div>
 			</div>
 		</section>

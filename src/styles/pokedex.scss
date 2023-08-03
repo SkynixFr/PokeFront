@@ -12,6 +12,28 @@
 	flex-direction: column;
 	overflow: hidden;
 
+	.secret-zarbi {
+		position: absolute;
+		top: 19em;
+		right: 37.5em;
+		width: 50px;
+		height: max-content;
+		display: flex;
+		align-items: center;
+
+		img {
+			width: 50px;
+			height: 50px;
+		}
+	}
+
+	.professeur-chen {
+		position: absolute;
+		top: 10em;
+		right: 8em;
+		z-index: 2;
+	}
+
 	.pokedex-title {
 		margin: 125px 0 0 0;
 		width: 100%;
@@ -142,20 +164,20 @@
 				cursor: pointer;
 
 				svg {
+					padding: 0 15px 0 15px;
 					width: 30px;
 					height: 30px;
 				}
 			}
 
 			.pokedex-cards {
-				width: 90%;
+				width: 100%;
 				height: max-content;
 				min-height: 375px;
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 				margin: 50px 0 0 0;
 				gap: 10px;
-				overflow: auto;
 
 				.pokedex-card-add {
 					position: relative;
@@ -254,6 +276,12 @@
 				cursor: pointer;
 				font-family: 'Clash Display', sans-serif;
 				font-size: clamp(1em, 2vw, 1.2em);
+
+				&:disabled {
+					background-color: gray;
+					border-color: gray;
+					cursor: not-allowed;
+				}
 			}
 		}
 	}

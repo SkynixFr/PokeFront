@@ -4,6 +4,7 @@ import logo from '../../public/images/pokefront-logo.png';
 import leaf from '../../public/images/leaf.png';
 import Image from 'next/image';
 import Cookies = require('js-cookie');
+import snorlax from '../../public/images/snorlax.png';
 
 interface FormField {
 	type: string;
@@ -39,6 +40,14 @@ const Login = () => {
 
 	return (
 		<section className="login">
+			<div className="snorlax">
+				<Image
+					src={snorlax}
+					alt="leaf"
+					priority
+					className="snorlax-image-leaf"
+				/>
+			</div>
 			<div className="leaf">
 				<Image src={leaf} alt="Leaf logo" priority></Image>
 			</div>
@@ -73,7 +82,7 @@ const Login = () => {
 				<Form
 					fields={fields}
 					labelButton={'Connexion'}
-					where={'/user/me'}
+					where={'/pokedex'}
 				></Form>
 				<div className="form-links">
 					<span>Pas encore de compte ?</span>

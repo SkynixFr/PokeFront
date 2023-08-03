@@ -14,6 +14,7 @@ import axiosInstance from '../../../services/axiosInterceptor';
 import Cookies from 'js-cookie';
 import axiosInstancePublic from '../../../services/axiosInstancePublic';
 import { useRouter } from 'next/router';
+import ash from '../../../public/images/ash.png';
 
 const accessToken = Cookies.get('acessToken');
 
@@ -137,6 +138,12 @@ interface UpdateBody {
 	email?: string;
 }
 
+interface FieldErrors {
+	username?: string;
+	email?: string;
+	password?: string;
+}
+
 const Profile = ({
 	user,
 	avatar,
@@ -160,6 +167,10 @@ const Profile = ({
 	const [colorResultMessage, setColorResultMessage] = useState('');
 	const [colorDeleteMessage, setColorDeleteMessage] = useState('');
 	const [password, setPassword] = useState('');
+
+	const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+
+	const [apiError, setApiError] = useState('');
 
 	const router = useRouter();
 
@@ -186,15 +197,62 @@ const Profile = ({
 		return emailPattern.test(email);
 	}
 
+	function isValidPassword(password: string): boolean {
+		const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*\W)[A-Za-z\d\W]{8,}$/;
+		return passwordPattern.test(password);
+	}
+
+	function handleBlur(event: React.FocusEvent<HTMLInputElement>) {
+		const inputId = event.target.id;
+		const newFieldErrors: { [key: string]: string } = {
+			...fieldErrors
+		};
+		if (inputId === 'username' && !event.target.value) {
+			newFieldErrors['username'] = 'Ce champ est obligatoire.';
+			setFieldErrors(newFieldErrors);
+		} else if (inputId === 'email' && !event.target.value) {
+			newFieldErrors['email'] = 'Ce champ est obligatoire.';
+			setFieldErrors(newFieldErrors);
+		} else if (inputId === 'password' && !event.target.value) {
+			newFieldErrors['password'] = 'Ce champ est obligatoire.';
+			setFieldErrors(newFieldErrors);
+		}
+	}
+
 	function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
 		const inputId = event.target.id;
+		const newFieldErrors: { [key: string]: string } = {
+			...fieldErrors
+		};
+
+		if (inputId === 'username' && event.target.value.length === 0) {
+			newFieldErrors['username'] = 'Ce champ est obligatoire.';
+		} else {
+			delete newFieldErrors['username'];
+			setFieldErrors(newFieldErrors);
+		}
+
+		console.log(newFieldErrors);
+
+		if (inputId === 'email' && event.target.value.length === 0) {
+			newFieldErrors['email'] = 'Ce champ est obligatoire.';
+		} else {
+			delete newFieldErrors['email'];
+			setFieldErrors(newFieldErrors);
+		}
+
+		if (inputId === 'password' && event.target.value.length === 0) {
+			newFieldErrors['password'] = 'Ce champ est obligatoire.';
+		} else {
+			delete newFieldErrors['password'];
+			setFieldErrors(newFieldErrors);
+		}
 
 		if (inputId === 'username') {
 			setUsername(event.target.value);
 		} else if (inputId === 'email') {
 			setEmail(event.target.value);
-		}
-		if (inputId === 'password') {
+		} else if (inputId === 'password') {
 			setPassword(event.target.value);
 		}
 	}
@@ -221,8 +279,23 @@ const Profile = ({
 		setShowDeletePopUp(false);
 	};
 
-	const handleSubmit = async (event: React.FormEvent) => {
+	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
+		const newFieldErrors: { [key: string]: string } = {
+			...fieldErrors
+		};
+		if (email && !isValidEmail(email)) {
+			newFieldErrors['email'] = 'Veuillez saisir une adresse email valide.';
+		}
+		if (password && !isValidPassword(password)) {
+			newFieldErrors['password'] =
+				'Le mot de passe doit contenir au moins 8 caractères, 1 majuscule, 1 caractère spécial et 1 chiffre.';
+		}
+
+		if (Object.keys(newFieldErrors).length > 0) {
+			setFieldErrors(newFieldErrors);
+			return;
+		}
 
 		// Appel PokePI pour modification de l'utilisateur
 		try {
@@ -231,6 +304,7 @@ const Profile = ({
 				data: username,
 				password: password
 			};
+
 			if (username.trim() === '') {
 				delete body.username;
 			} else body.username = username;
@@ -301,8 +375,6 @@ const Profile = ({
 				}
 			);
 
-			console.log(responseUpdateUser);
-
 			setColorDeleteMessage(`green`);
 			setDeleteMessage(`Compte supprimé avec succès !`);
 
@@ -338,6 +410,122 @@ const Profile = ({
 				<div>Chargement...</div>
 			) : (
 				<section className="profil">
+					{showPopup && (
+						<div className="popup">
+							<div className="popup-content">
+								{/* Formulaire de modification des informations de l'utilisateur */}
+								<h1 className="form-title">
+									Modifier vos informations
+								</h1>
+								<form onSubmit={handleSubmit} className="form-fields">
+									<div className="form-group">
+										<label htmlFor="username" className="form-label">
+											Pseudo :{' '}
+										</label>
+										<input
+											type="text"
+											id="username"
+											placeholder="Nouveau pseudo"
+											onChange={handleChange}
+											onBlur={handleBlur}
+										/>
+										{fieldErrors['username'] && (
+											<div className="error-message">
+												{fieldErrors['username']}
+											</div>
+										)}
+									</div>
+
+									<div className="form-group">
+										<label htmlFor="email">Email : </label>
+										<input
+											type="email"
+											id="email"
+											placeholder="Nouvel email"
+											onChange={handleChange}
+											onBlur={handleBlur}
+										/>
+										{fieldErrors['email'] && (
+											<div className="error-message">
+												{fieldErrors['email']}
+											</div>
+										)}
+									</div>
+									<div className="form-group">
+										<label htmlFor="mot de passe">
+											Mot de passe :{' '}
+										</label>
+										<input
+											type="password"
+											id="password"
+											placeholder="Mot de passe actuel"
+											onChange={handleChange}
+											onBlur={handleBlur}
+										/>
+										{fieldErrors['password'] && (
+											<div className="error-message">
+												{fieldErrors['password']}
+											</div>
+										)}
+									</div>
+									{showResultMessage && (
+										<div
+											className="field-result"
+											style={{ color: colorResultMessage }}
+										>
+											{resultMessage}
+										</div>
+									)}
+
+									<button type="submit" className="submit-button">
+										Modifier
+									</button>
+									<button
+										type="button"
+										onClick={handlePopupClose}
+										className="cancel-button"
+									>
+										Annuler
+									</button>
+								</form>
+							</div>
+						</div>
+					)}
+
+					{showDeletePopUp && (
+						<div className="popup delete">
+							<div className="popup-content">
+								{/* Pop up validation suppression de compte */}
+								<h1 className="form-title">
+									Êtes-vous sûr de vouloir supprimer votre compte ?
+								</h1>
+								<form onSubmit={handleDelete}>
+									{showDeleteMessage && (
+										<div
+											className="field-result"
+											style={{ color: colorDeleteMessage }}
+										>
+											{deleteMessage}
+										</div>
+									)}
+
+									<button type="submit" className="submit-button">
+										Confirmer la suppression
+									</button>
+									<button
+										type="button"
+										onClick={handleDeletePopupClose}
+										className="cancel-button"
+									>
+										Annuler
+									</button>
+								</form>
+							</div>
+						</div>
+					)}
+					<div className="ash">
+						<Image src={ash} alt="blancoton logo" priority></Image>
+					</div>
 					<div className="blancoton">
 						<Image src={blancoton} alt="blancoton logo" priority></Image>
 					</div>
@@ -424,118 +612,6 @@ const Profile = ({
 										<span>Supprimer </span>
 									</button>
 								</div>
-
-								{showPopup && (
-									<div className="popup">
-										<div className="popup-content">
-											{/* Formulaire de modification des informations de l'utilisateur */}
-											<h1 className="form-title">
-												Modifier vos informations
-											</h1>
-											<form
-												onSubmit={handleSubmit}
-												className="form-fields"
-											>
-												<div className="form-group">
-													<label
-														htmlFor="username"
-														className="form-label"
-													>
-														Pseudo :{' '}
-													</label>
-													<input
-														type="text"
-														id="username"
-														placeholder="Nouveau pseudo"
-														onChange={handleChange}
-													/>
-												</div>
-
-												<div className="form-group">
-													<label htmlFor="email">Email : </label>
-													<input
-														type="email"
-														id="email"
-														placeholder="Nouvel email"
-														onChange={handleChange}
-													/>
-												</div>
-												<div className="form-group">
-													<label htmlFor="mot de passe">
-														Mot de passe :{' '}
-													</label>
-													<input
-														type="password"
-														id="password"
-														placeholder="Mot de passe actuel"
-														onChange={handleChange}
-														// onChange={e =>
-														// 	(user.email = e.target.value)
-														// }
-													/>
-												</div>
-												{showResultMessage && (
-													<div
-														className="field-result"
-														style={{ color: colorResultMessage }}
-													>
-														{resultMessage}
-													</div>
-												)}
-
-												<button
-													type="submit"
-													className="submit-button"
-												>
-													Modifier
-												</button>
-												<button
-													type="button"
-													onClick={handlePopupClose}
-													className="cancel-button"
-												>
-													Annuler
-												</button>
-											</form>
-										</div>
-									</div>
-								)}
-
-								{showDeletePopUp && (
-									<div className="popup">
-										<div className="popup-content">
-											{/* Pop up validation suppression de compte */}
-											<h1 className="form-title">
-												Êtes-vous sûr de vouloir supprimer votre
-												compte ?
-											</h1>
-											<form onSubmit={handleDelete}>
-												{showDeleteMessage && (
-													<div
-														className="field-result"
-														style={{ color: colorDeleteMessage }}
-													>
-														{deleteMessage}
-													</div>
-												)}
-
-												<button
-													type="submit"
-													className="submit-button"
-												>
-													Confirmer la suppression
-												</button>
-												<button
-													type="button"
-													onClick={handleDeletePopupClose}
-													className="cancel-button"
-												>
-													Annuler
-												</button>
-											</form>
-										</div>
-									</div>
-								)}
 							</div>
 						</div>
 						<div className="underline profile"></div>
@@ -556,10 +632,15 @@ const Profile = ({
 
 							<div className="pokedex-cards">
 								{pokemonData.map(pokemon => (
-									<PokedexCard
-										pokemon={pokemon}
+									<div
+										className="pokedex-card-container"
 										key={pokemon.id}
-									></PokedexCard>
+									>
+										<PokedexCard
+											pokemon={pokemon}
+											key={pokemon.id}
+										></PokedexCard>
+									</div>
 								))}
 							</div>
 						</div>

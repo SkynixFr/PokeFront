@@ -1,6 +1,6 @@
 .profil {
 	width: 100%;
-	height: 100%;
+	min-height: 100vh;
 	position: relative;
 	background-image: url('../public/images/poke-camping.jpg');
 	background-size: cover;
@@ -11,6 +11,127 @@
 	align-items: center;
 	flex-direction: column;
 	overflow: hidden;
+
+	.popup {
+		height: auto;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-flow: column;
+		background: rgba(255, 255, 255, 1);
+		border-radius: 10px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		border: none;
+		padding: 8px;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+
+		background-color: rgba(0, 0, 0, 0.5);
+		z-index: 3;
+
+		.form-title {
+			font-size: clamp(1.8em, 5vw, 2em);
+			margin: 0 0 15px 0;
+			flex-grow: 1;
+		}
+
+		&.delete {
+			.popup-content {
+				width: 850px;
+			}
+		}
+
+		.popup-content {
+			background-color: #fff;
+			padding: 20px;
+			border-radius: 8px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			width: 600px;
+			.form-group {
+				width: 100%;
+				max-width: 400px;
+				margin-bottom: 20px;
+				display: block;
+
+				.form-label {
+					width: max-content;
+					// position: absolute;
+					// top: -8px;
+					// left: 10px;
+					background-color: #fff;
+					font-size: clamp(0.8em, 2vw, 0.9em);
+					// padding: 0 10px 0 10px;
+				}
+				.error-message {
+					color: #ff4210;
+					font-size: clamp(0.9em, 2vw, 1em);
+					margin-top: 5px;
+				}
+
+				input {
+					width: 100%;
+					padding: 10px;
+					font-size: 16px;
+					border: 1px solid #ccc;
+					border-radius: 4px;
+					font-family: 'Clash Display', sans-serif;
+					border-color: #ccc;
+				}
+			}
+
+			button[type='submit'] {
+				width: 100%;
+				height: 45px;
+				border: 1px solid #386abb;
+				border-radius: 5px;
+				background-color: #386abb;
+				color: #fff;
+				cursor: pointer;
+				font-family: 'Clash Display', sans-serif;
+				font-size: clamp(1em, 2vw, 1.2em);
+			}
+
+			.submit-button:hover {
+				background-color: #4e81c3; /* Nouvelle couleur de fond au survol */
+			}
+
+			.cancel-button {
+				width: 100%;
+				height: 35px;
+				border: 1px solid #9e0b0b;
+				margin-top: 20px;
+				border-radius: 5px;
+				background-color: #9e0b0b;
+				color: #fff;
+				cursor: pointer;
+				font-family: 'Clash Display', sans-serif;
+				font-size: clamp(1em, 2vw, 1.2em);
+			}
+
+			.cancel-button:hover {
+				background-color: #d92727; /* Nouvelle couleur de fond au survol */
+			}
+		}
+	}
+
+	.ash {
+		position: absolute;
+		top: 17em;
+		left: 8em;
+		z-index: 2;
+
+		img {
+			width: 180px;
+			height: 350px;
+		}
+	}
 
 	.blancoton {
 		position: absolute;
@@ -73,10 +194,10 @@
 
 	.profil-infos {
 		width: 80%;
-		height: max-content;
+		height: 100%;
 		background: rgba(255, 255, 255, 0.85);
 		backdrop-filter: blur(10px);
-		margin: 125px 0 0 0;
+		margin: 100px 0 0 0;
 		border-top-left-radius: 15px;
 		border-top-right-radius: 15px;
 
@@ -237,122 +358,13 @@
 						}
 					}
 				}
-
-				.popup {
-					/* Styles pour la pop-up (en position fixe pour l'afficher au centre de l'écran) */
-					// position: fixed;
-					// width: 100%;
-					// height: 100%;
-					// background-color: rgba(0, 0, 0, 0.5);
-					// display: flex;
-					// justify-content: center;
-					// align-items: center;
-					// z-index: 2;
-
-					//width: clamp(350px, 35%, 500px);
-					height: auto;
-					display: flex;
-					align-items: center;
-					flex-flow: column;
-					background: rgba(255, 255, 255, 1);
-					border-radius: 10px;
-					box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-					border: none;
-					padding: 8px;
-
-					position: fixed;
-					top: 0;
-					left: 0;
-					width: 100%;
-					height: 100%;
-					justify-content: center;
-					background-color: rgba(0, 0, 0, 0.5);
-					z-index: 2;
-
-					.form-title {
-						font-size: clamp(1.8em, 5vw, 2em);
-						margin: 0 0 15px 0;
-						flex-grow: 1;
-					}
-
-					.popup-content {
-						background-color: #fff;
-						padding: 20px;
-						border-radius: 8px;
-						box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-
-						display: flex;
-						flex-direction: column;
-						align-items: center;
-
-						.form-group {
-							width: 100%;
-							max-width: 400px;
-							margin-bottom: 20px;
-							display: block;
-
-							.form-label {
-								width: max-content;
-								// position: absolute;
-								// top: -8px;
-								// left: 10px;
-								background-color: #fff;
-								font-size: clamp(0.8em, 2vw, 0.9em);
-								// padding: 0 10px 0 10px;
-							}
-
-							input {
-								width: 100%;
-								padding: 10px;
-								font-size: 16px;
-								border: 1px solid #ccc;
-								border-radius: 4px;
-								font-family: 'Clash Display', sans-serif;
-								border-color: #ccc;
-							}
-						}
-
-						button[type='submit'] {
-							width: 100%;
-							height: 45px;
-							border: 1px solid #386abb;
-							border-radius: 5px;
-							background-color: #386abb;
-							color: #fff;
-							cursor: pointer;
-							font-family: 'Clash Display', sans-serif;
-							font-size: clamp(1em, 2vw, 1.2em);
-						}
-
-						.submit-button:hover {
-							background-color: #4e81c3; /* Nouvelle couleur de fond au survol */
-						}
-
-						.cancel-button {
-							width: 100%;
-							height: 35px;
-							border: 1px solid #9e0b0b;
-							margin-top: 20px;
-							border-radius: 5px;
-							background-color: #9e0b0b;
-							color: #fff;
-							cursor: pointer;
-							font-family: 'Clash Display', sans-serif;
-							font-size: clamp(1em, 2vw, 1.2em);
-						}
-
-						.cancel-button:hover {
-							background-color: #d92727; /* Nouvelle couleur de fond au survol */
-						}
-					}
-				}
 			}
 		}
 	}
 
 	.user-pokedex {
 		width: 80%;
-		height: auto;
+		min-height: 260px;
 		margin: 50px auto;
 		display: flex;
 		flex-direction: column;
@@ -410,52 +422,65 @@
 		.pokedex-cards {
 			width: 100%;
 			height: max-content;
+			min-height: 375px;
 			display: grid;
 			grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 			margin: 50px 0 0 0;
-
-			.pokedex-card {
-				width: 60%;
-				height: 150px;
+			gap: 10px;
+			.pokedex-card-container {
+				position: relative;
 				display: flex;
-				flex-direction: column;
-				padding: 10px;
+				justify-content: center;
+				align-items: center;
 				border-radius: 10px;
-				box-sizing: content-box;
-
-				.card-id {
+				.pokedex-card {
 					width: 100%;
+					margin: 0 auto;
+					height: 175px;
 					display: flex;
-					justify-content: flex-end;
-					font-size: 0.9em;
-					color: #000;
-				}
+					flex-direction: column;
+					padding: 10px;
+					border-radius: 10px;
+					box-sizing: content-box;
 
-				.card-sprite {
-					width: 100%;
-					height: max-content;
-					display: flex;
-					justify-content: center;
-					align-items: center;
-
-					img {
-						width: 100px;
-						height: 100px;
-						border-radius: 10px;
-					}
-				}
-
-				.card-name {
-					width: 100%;
-					height: max-content;
-					display: flex;
-					justify-content: center;
-					align-items: center;
-
-					h1 {
-						font-size: 1.1em;
-
+					.card-id {
+						width: 100%;
+						display: flex;
+						justify-content: flex-end;
+						font-size: 0.9em;
 						color: #000;
+					}
+
+					.card-sprite {
+						width: 100%;
+						height: max-content;
+						display: flex;
+						justify-content: center;
+						align-items: center;
+						flex-grow: 1;
+						img {
+							width: 100px;
+							height: 100px;
+							border-radius: 10px;
+						}
+					}
+
+					.card-name {
+						width: 100%;
+						height: max-content;
+						display: flex;
+						justify-content: center;
+						align-items: center;
+						margin: 15px 0 0 0;
+
+						h1 {
+							text-align: center;
+							font-size: 1.1em;
+							color: #000;
+							overflow: hidden;
+							white-space: wrap;
+							text-overflow: ellipsis;
+						}
 					}
 				}
 			}

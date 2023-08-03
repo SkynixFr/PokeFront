@@ -82,17 +82,16 @@
 		display: flex;
 		align-items: center;
 		flex-flow: column;
-		margin: 2vh 0 0 0;
+		margin: 100px 0 0 0;
 		background: rgba(255, 255, 255, 1);
 		border-radius: 10px;
 		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 		backdrop-filter: blur(10px);
 		border: none;
-		padding: 8px;
+		padding: 16px;
 
 		.form-title {
 			font-size: clamp(1.8em, 5vw, 2em);
-			margin: 0 0 15px 0;
 			flex-grow: 1;
 		}
 

@@ -10,7 +10,10 @@ const MouseFollower: React.FC = () => {
 
 	useEffect(() => {
 		const handleMouseMove = (event: MouseEvent) => {
-			mousePosition.current.set(event.clientX, event.clientY);
+			// Adjust mouse position for page scroll
+			const mouseX = event.clientX + window.scrollX;
+			const mouseY = event.clientY + window.scrollY;
+			mousePosition.current.set(mouseX, mouseY);
 		};
 
 		window.addEventListener('mousemove', handleMouseMove);
@@ -25,7 +28,7 @@ const MouseFollower: React.FC = () => {
 		if (!imageElement) return;
 
 		const updateImagePosition = () => {
-			const smoothnessFactor = 0.01;
+			const smoothnessFactor = 0.005;
 
 			targetPosition.current.lerp(mousePosition.current, smoothnessFactor);
 			imageElement.style.transform = `translate(${targetPosition.current.x}px, ${targetPosition.current.y}px)`;

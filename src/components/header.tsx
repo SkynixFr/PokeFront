@@ -4,10 +4,13 @@ import pokefrontLogo from '../public/images/pokefront-logo-reduit.png';
 import pokedex from '../public/images/pokedex-icon.png';
 import trainer from '../public/images/pokemon-trainer-icon.png';
 import logout from '../public/images/logout-icon.png';
+import { useRouter } from 'next/router';
 
 const Header = () => {
+	const router = useRouter();
+
 	function handleLogout() {
-		console.log('Logout');
+		router.push('/login');
 	}
 
 	return (
@@ -30,11 +33,9 @@ const Header = () => {
 						</Link>
 					</li>
 				</ul>
-				<div className="header-logout">
-					<Link href="/login" onClick={handleLogout}>
-						<Image src={logout} alt="Logout" priority></Image>
-						<span className="tooltip">Se déconnecter</span>
-					</Link>
+				<div className="header-logout" onClick={handleLogout}>
+					<Image src={logout} alt="Logout" priority></Image>
+					<span className="tooltip">Se déconnecter</span>
 				</div>
 			</div>
 		</header>

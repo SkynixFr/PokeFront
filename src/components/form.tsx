@@ -84,6 +84,17 @@ const Form: React.FC<FormProps> = ({ fields, labelButton, where }) => {
 				setFieldErrors(newFieldErrors);
 				return;
 			}
+
+			if (!isValidPassword(formData.password)) {
+				const newFieldErrors: { [key: string]: string } = {
+					...fieldErrors
+				};
+				newFieldErrors['password'] = 'Mauvais mot de passe.';
+
+				setFieldErrors(newFieldErrors);
+				return;
+			}
+
 			try {
 				await axios.post('http://localhost:8080/api/v2/users/register', {
 					username: formData.username,
