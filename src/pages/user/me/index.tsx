@@ -462,6 +462,7 @@ const Profile = ({
 											onChange={handleChange}
 											onBlur={handleBlur}
 										/>
+
 										{fieldErrors['password'] && (
 											<div className="error-message">
 												{fieldErrors['password']}

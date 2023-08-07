@@ -11,7 +11,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 
 	useEffect(() => {
 		if (router.asPath === '/') {
-			router.push('/pokedex');
+			router.push('/login');
 		}
 	}, []);
 	return (
